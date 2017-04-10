@@ -1,0 +1,4 @@
+- name: instalación del servicio de DNS
+  shell: sudo apt install bind9 -y
+
+  

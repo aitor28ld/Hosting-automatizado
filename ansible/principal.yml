@@ -2,3 +2,4 @@
 - hosts: proyecto
   roles:
     - actualizacion
+    - dns
