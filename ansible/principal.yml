@@ -1,0 +1,4 @@
+---
+- hosts: proyecto
+  roles:
+    - actualizacion
