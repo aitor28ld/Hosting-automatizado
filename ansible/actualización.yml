@@ -1,0 +1,6 @@
+---
+- hosts: proyecto
+  tasks:
+    - name: actualización del sistema
+      command: sudo apt-get update
+      command: sudo apt-get upgrade -y
