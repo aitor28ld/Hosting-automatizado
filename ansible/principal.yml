@@ -1,5 +1,5 @@
 ---
 - hosts: proyecto
   roles:
-    - actualizacion
+    - actualizaciones
     - dns
