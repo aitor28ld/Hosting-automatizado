@@ -1,2 +1,8 @@
-- name: instalación de mysql-server
-  shell: sudo apt install mysql-server -y
+- name: Definiendo contraseña antes de instalar
+  debconf: name='mysql-server' question='mysql-server/root_password' value='{{mysql_root_password | quote}}' vtype='password'
+
+- name: Confirmación de la contraseña de root
+  debconf: name='mysql-server' question='mysql-server/root_password_again' value='{{mysql_root_password | quote}}' vtype='password'
+
+- name: Instalando MySQL Server
+  shell: apt install mysql-server mysql-client python-mysqldb -y

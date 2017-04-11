@@ -1,5 +1,7 @@
 ---
 - hosts: proyecto
+  user: usuario
+  sudo: True
   roles:
     - actualizaciones
     - dns
