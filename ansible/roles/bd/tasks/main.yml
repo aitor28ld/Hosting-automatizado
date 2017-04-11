@@ -4,5 +4,5 @@
 - name: Confirmación de la contraseña de root
   debconf: name='mysql-server' question='mysql-server/root_password_again' value='{{mysql_root_password | quote}}' vtype='password'
 
-- name: Instalando MySQL Server
+- name: Instalando MySQL Server/Client
   shell: apt install mysql-server mysql-client python-mysqldb -y
