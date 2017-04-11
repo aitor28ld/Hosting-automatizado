@@ -1,0 +1,2 @@
+- name: reinicio de MySQL
+  shell: systemctl restart mysql-server

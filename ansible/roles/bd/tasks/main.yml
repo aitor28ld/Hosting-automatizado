@@ -1,0 +1,2 @@
+- name: instalación de mysql-server
+  shell: sudo apt install mysql-server -y
