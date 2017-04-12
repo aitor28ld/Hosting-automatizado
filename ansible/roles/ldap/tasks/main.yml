@@ -1,2 +1,61 @@
-- name: instalación de LDAP
-  shell: sudo apt install slapd -y
+- name: No autoconfigurar LDAP
+  debconf: >
+    name=slapd
+    question='slapd/no_configuration'
+    value=true
+    vtype=boolean
+  tags: openldap
+
+- name: Instalación de los paquetes necesarios LDAP
+  apt: name={{ item }} state=present update_cache=yes
+  with_items: openldap_packages
+  environment: env
+  tags: openldap
+
+- name: Creando configuración por defecto LDAP
+  template: >
+    src=slapd_defaults.j2
+    dest={{ openldap_defaults_file }}
+    owner=root
+    group=root
+    mode=0644
+  notify: reiniciando LDAP
+  tags: openldap
+
+- name: Hasheando contraseña LDAP
+  command: slappasswd -h {{ openldap_server_password_hash }} -s {{ openldap_server_rootpw }}
+  register: rootpw
+  tags: openldap
+
+- name: Creando configuración del servidor LDAP
+  template: >
+    src=slapd.conf.j2
+    dest={{ openldap_server_configuration }}
+    owner=root
+    group=root
+    mode=0644
+  notify: reiniciando LDAP
+  tags: openldap
+
+- name: Creando configuración BD de LDAP
+  template: >
+    src=DB_CONFIG.j2
+    dest={{ openldap_server_directory }}/DB_CONFIG
+    owner=openldap
+    group=openldap
+    mode=0600
+  notify: reiniciando LDAP
+  tags: openldap
+
+- name: Creando configuración del cliente LDAP
+  template: >
+    src=ldap.conf.j2
+    dest={{ openldap_client_configuration }}
+    owner=root
+    group=root
+    mode=0644
+  tags: openldap
+
+- name: Asegurando la activación del servicio LDAP al inicio
+  service: name=slapd state=started enabled=yes
+  tags: openldap

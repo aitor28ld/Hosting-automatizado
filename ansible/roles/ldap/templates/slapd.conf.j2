@@ -1,0 +1,57 @@
+# {{ ansible_managed }}
+
+# Basics
+
+{% for schema in openldap_server_schemas %}
+include /etc/ldap/schema/{{ schema }}.schema
+{% endfor %}
+
+pidfile {{ openldap_server_pidfile }}
+argsfile {{ openldap_server_argsfile }}
+loglevel {{ openldap_server_loglevel }}
+
+password-hash {{ openldap_server_password_hash }}
+
+modulepath {{ openldap_server_modulepath }}
+{% for module in openldap_server_modules %}
+moduleload {{ module }}
+{% endfor %}
+
+# Database configuration
+
+database {{ openldap_server_database }}
+suffix "{{ openldap_server_suffix }}"
+rootdn "{{ openldap_server_rootdn }}"
+rootpw {{ rootpw.stdout }}
+directory {{ openldap_server_directory }}
+{% for index in openldap_server_indexes %}
+index {{ index }}
+{% endfor %}
+
+overlay syncprov
+syncprov-checkpoint {{ openldap_sync_syncprov_checkpoint }}
+syncprov-sessionlog {{ openldap_sync_syncprov_sessionlog }}
+
+{% if openldap_sync_consumer %}
+syncrepl rid={{ openldap_sync_syncrepl_rid }}
+  provider={{ openldap_sync_syncrepl_provider }}
+  bindmethod={{ openldap_sync_syncrepl_bindmethod }}
+  timeout={{ openldap_sync_syncrepl_timeout }}
+  network-timeout={{ openldap_sync_syncrepl_network_timeout }}
+  binddn="{{ openldap_sync_syncrepl_binddn }}"
+  credentials="{{ openldap_sync_syncrepl_credentials }}"
+  keepalive={{ openldap_sync_syncrepl_keepalive }}
+  starttls={{ openldap_sync_syncrepl_starttls }}
+  filter="{{ openldap_sync_syncrepl_filter }}"
+  searchbase="{{ openldap_sync_syncrepl_searchbase }}"
+  scope={{ openldap_sync_syncrepl_scope }}
+  schemachecking={{ openldap_sync_syncrepl_schemachecking }}
+  type={{ openldap_sync_syncrepl_type }}
+  interval={{ openldap_sync_syncrepl_interval }}
+  retry="{{ openldap_sync_syncrepl_retry }}"
+{% endif %}
+
+# ACLs
+{% for acl in openldap_server_acls %}
+access {{ acl }}
+{% endfor %}
