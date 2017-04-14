@@ -1,4 +1,30 @@
 - name: instalación del servicio de DNS
   shell: sudo apt install bind9 -y
 
+- copy: 
+    src=named.conf.local 
+    dest=/etc/bind/named.conf.local
+
+- copy:
+    src=db.spotype 
+    dest=/var/cache/bind/db.spotype
+
+- copy: 
+    src=db.192.168.1 
+    dest=/var/cache/bind/db.192.168.1
+
+- copy: 
+    src=resolv.conf
+    dest=/etc/resolv.conf
+
+- name: Configurando permisos del servicio DNS
+  shell: sudo chown root:root /etc/bind/named.conf.local
+  shell: sudo chmod 644 /etc/bind/named.conf.local
+  shell: sudo chown root:root /var/cache/bind/db.spotype.com
+  shell: sudo chown root:root /var/cache/bind/db.192.168.1
+  shell: sudo chmod 644 /var/cache/bind/db.spotype.com
+  shell: sudo chmod 644 /var/cache/bind/db.192.168.1
+  shell: sudo chown root:root /etc/resolv.conf
+  shell: sudo chmod 644 /etc/resolv.conf
+  notify: Reinicio del servicio DNS (bind9)
   

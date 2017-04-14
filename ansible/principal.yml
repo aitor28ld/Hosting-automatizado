@@ -5,6 +5,6 @@
   roles:
     - actualizaciones
     - dns
-    - serweb
-    - bd
-    - { role: ldap, openldap_domain: 'spotype.com', openldap_organization: 'spotype', openldap_admin_password: 'root' }
+#    - serweb
+#    - bd
+#    - { role: ldap, openldap_domain: 'spotype.com', openldap_organization: 'spotype', openldap_admin_password: 'root' }

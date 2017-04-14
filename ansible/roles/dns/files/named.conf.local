@@ -1,0 +1,14 @@
+zone "spotype.com" {
+ #Tipo de servidor,en nuestro caso el maestro
+ type master;
+ #El archivo que contiene la configuración de resolución directa
+ file "db.spotype";
+ allow-query {192.168.1.0/24;};
+};
+
+zone "1.168.192.in-addr.arpa" {
+ type master;
+ #El archivo que contiene la configuración de resolución inversa
+ file "db.192.168.1";
+ allow-query {192.168.1.0/24;};
+};
