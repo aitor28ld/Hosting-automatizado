@@ -1,2 +1,16 @@
 - name: instalación de apache
   shell: sudo apt install apache2 php5 php5-curl -y
+
+- copy:
+    src: spotype.conf
+    dest: /etc/apache2/sites-available/spotype.conf
+    owner: root
+    group: root
+    mode: 644
+
+- name: Habilitando el sitio de Spotype.com
+  shell: sudo a2ensite spotype.conf
+
+- name: Haibilitando modulos de apache2
+  action: command a2enmod rewrite
+  notify: reinicio del servicio de Apache
