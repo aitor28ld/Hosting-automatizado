@@ -6,3 +6,4 @@
 
 - name: Instalando MySQL Server/Client
   shell: apt install mysql-server mysql-client python-mysqldb -y
+  notify: reinicio de MySQL

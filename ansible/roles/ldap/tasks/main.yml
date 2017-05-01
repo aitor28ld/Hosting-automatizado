@@ -59,3 +59,12 @@
 - name: Asegurando la activación del servicio LDAP al inicio
   service: name=slapd state=started enabled=yes
   tags: openldap
+
+- copy:
+    src: inicial.ldif
+    dest: /etc/ldap/inicial.ldif
+
+- name: Creando una base para Openldap
+  shell: chmod 644 /etc/ldap/inicial.ldif
+  shell: chown root:root /etc/ldap/inicial.ldif
+  shell: ldapadd -x -D 'cn=admin,dc=spotype,dc=com' -w root -f /etc/ldap/inicial.ldif

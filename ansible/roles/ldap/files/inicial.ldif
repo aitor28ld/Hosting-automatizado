@@ -1,0 +1,12 @@
+dn: dc=spotype,dc=com
+objectClass: top
+objectClass: dcObject
+objectClass: organization
+dc: spotype
+o: Spotype S.L
+
+dn: ou=People,dc=spotype,dc=com
+ou: People
+objectClass: top
+objectClass: organizationalUnit
+

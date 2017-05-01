@@ -2,7 +2,8 @@
 
 URI {{ openldap_client_uri }}
 BASE {{ openldap_client_base }}
-BINDDN {{ openldap_client_binddn }}
 
 SIZELIMIT {{ openldap_client_sizelimit }}
 TIMELIMIT {{ openldap_client_timelimit }}
+
+TLS_CACERT	/etc/ssl/certs/ca-certificates.crt

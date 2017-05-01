@@ -1,5 +1,9 @@
+# Instalamos Bind9
 - name: instalación del servicio de DNS
   shell: sudo apt install bind9 -y
+
+# Copiamos los ficheros principales de configuración ubicados en ../files/
+# para tener configurado Bind9
 
 - copy: 
     src=named.conf.local 
@@ -16,6 +20,9 @@
 - copy: 
     src=resolv.conf
     dest=/etc/resolv.conf
+
+# Damos los correspondientes permisos a los ficheros copiados y notificamos
+# al handler el reinicio del servicio
 
 - name: Configurando permisos del servicio DNS
   shell: sudo chown root:root /etc/bind/named.conf.local

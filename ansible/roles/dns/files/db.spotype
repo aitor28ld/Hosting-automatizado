@@ -10,5 +10,6 @@ spotype.com.      IN      NS      ansible.spotype.com.
 spotype.com.      IN      MX      10 correo.spotype.com.
 
 $ORIGIN spotype.com.
-ansible        IN      A       192.168.1.110
-www            IN      CNAME   ansible
+ansible		IN      A       192.168.1.110
+www            	IN      CNAME   ansible
+ldap		IN	CNAME	ansible
