@@ -64,6 +64,19 @@
     src: inicial.ldif
     dest: /etc/ldap/inicial.ldif
 
+- copy:
+    src: openssh-lpk.ldif
+    dest: /etc/ldap/schema/openssh-lpk.ldif
+
+- copy:
+    src: openssh-lpk.schema
+    dest: /etc/ldap/schema/openssh-lpk.schema
+
+- name: Creando esquema Openssh-lpk
+  shell: chmod 644 /etc/ldap/schema/openssh-lpk.*
+  shell: chown root:root /etc/ldap/schema/openssh-lpk.*
+  notify: reiniciando LDAP
+
 - name: Creando una base para Openldap
   shell: chmod 644 /etc/ldap/inicial.ldif
   shell: chown root:root /etc/ldap/inicial.ldif

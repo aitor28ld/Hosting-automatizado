@@ -9,6 +9,7 @@ openldap_server_schemas:
   - core
   - cosine
   - inetorgperson
+  - openssh-lpk
 openldap_server_loglevel: none
 openldap_server_modules:
   - back_hdb
