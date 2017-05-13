@@ -8,7 +8,7 @@ from ldap3 import Server, Connection, ALL
 
 usuario = "cn=admin,dc=spotype,dc=com"
 #Cambiar contraseña para no tener que ponerla transparente
-password = getpass.getpass('Introduce la contraseña: ')
+password = 'root'
 
 server = Server("192.168.1.110", get_info=ALL)
 conn = Connection(server, usuario, password, auto_bind=True)
@@ -25,21 +25,25 @@ def registro():
 
 @post('/sesion')
 def sesion():
-	sesusuario = request.forms.get('usuario')
-	sespassword = request.forms.get('password')
-	sesemail = request.forms.get('email')
-	sesnombre = request.forms.get('nombre')
-	sesapeuno = request.forms.get('apeuno')
-	sesapedos = request.forms.get('apedos')
-	sesssh = request.forms.get('ssh')
-	uid = "uid="+sesusuario+",ou=People,cn=admin,dc=spotype,dc=com"
-	objectclass = ["inetOrgPerson","posixAccount","person","top","ldapPublicKey"]
-	atributos = {"cn":sesnombre+''+sesapeuno+''+sesapedos,"sn":sesapeuno+''+sesapedos,"mail":sesemail,"uid": sesusuario,"uidNumber":20000 ,"gidNumber": 20000,"homeDirectory":"/home/users/"+sesusuario,"sshPublicKey": sesssh}
-	conn.add(uid,objectclass,atributos)
-	print conn
-	return template('sesion.tpl', usuario=sesusuario)
+	usuario = request.forms.get('usuario')
+	password = request.forms.get('password')
+	email = request.forms.get('email')
+	nombre = request.forms.get('nombre')
+	apeuno = request.forms.get('apeuno')
+	apedos = request.forms.get('apedos')
+	redirect ('http://192.168.1.110:8080/prueba/'+usuario+'/'+password+'/'+email+'/'+nombre+'/'+apeuno+'/'+apedos)
 	
-"""Añadir la introducción de los esquemas al fichero de slapd.conf con ansible"""
+@route('/prueba/<usuario>/<password>/<email>/<nombre>/<apeuno>/<apedos>')
+def prueba(usuario,password,email,nombre,apeuno,apedos,):
+	uid = "uid="+usuario+",ou=People,dc=spotype,dc=com"
+	objectclass = ["inetOrgPerson","posixAccount","person","top"]
+	atributos = {"cn":nombre+" "+apeuno+" "+apedos,"sn":apeuno+" "+apedos,"userPassword":password,"mail":email,"uid":usuario,"uidNumber":20000 ,"gidNumber":20000,"homeDirectory":"/home/users/"+usuario}
+	conexion = conn.add(uid,objectclass,atributos)
+	if conexion == True:
+		return template('sesion-valida.tpl', usuario=usuario)
+	else:
+		return template('sesion-error.tpl', usuario=usuario)
+
 
 #Logueos de usuarios
 #@post('/login')
