@@ -40,20 +40,33 @@ def prueba(usuario,password,email,nombre,apeuno,apedos,):
 	atributos = {"cn":nombre+" "+apeuno+" "+apedos,"sn":apeuno+" "+apedos,"userPassword":password,"mail":email,"uid":usuario,"uidNumber":20000 ,"gidNumber":20000,"homeDirectory":"/home/users/"+usuario}
 	conexion = conn.add(uid,objectclass,atributos)
 	if conexion == True:
+		commands.getoutput('sudo mkdir /home/users/'+usuario)
+		uid = commands.getoutput('ldapsearch -x -w root -D "cn=admin,dc=spotype,dc=com" "(uid='+usuario+')" uidNumber |grep uid | tail -1 |cut -d: -f2')
+		uid = uid.split(" ")[1]
+		commands.getoutput('sudo chown '+uid+' /home/users/'+usuario)
+		commands.getoutput('sudo chmod 700 /home/users/'+usuario)
 		return template('sesion-valida.tpl', usuario=usuario)
 	else:
 		return template('sesion-error.tpl', usuario=usuario)
 
-
 #Logueos de usuarios
-#@post('/login')
-#def login():
-#	usuario = request.forms.get('usuario')
-#	password = request.forms.get('contraseña')
-#	userldap = commands.getoutput('')
-	#if usuario == :
-	#else:
-	#	return template ('error.tpl', usuario=usuario)
+@route('/inicio')
+def inicio():
+	return template('inicio.tpl')
+
+@post('/login')
+def login():
+	usuario = request.forms.get('usuario')
+	password = request.forms.get('contraseña')
+	userldap = commands.getoutput('ldapsearch -x -w root -D "cn=admin,dc=spotype,dc=com" "(uid='+usuario+')" uid |grep uid | tail -1 |cut -d: -f2')
+	userldap = userldap.split(" ")[1]
+	passldap = commands.getoutput('ldapsearch -x -w root -D "cn=admin,dc=spotype,dc=com" "(uid='+usuario+')" userPassword | grep userPassword | tail -1 | cut -d: -f3')
+	passldap = passldap.split(" ")[1]
+	passldap = commands.getoutput('echo -n '+passldap+' | base64 -d')
+	if usuario == userldap and password == passldap:
+		return template('login-ok.tpl', usuario=usuario)
+	else:
+		return template ('login-error.tpl', usuario=usuario)
 
 #Ficheros estáticos
 @route('/static/<filepath:path>')

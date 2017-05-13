@@ -24,8 +24,9 @@
 				</header>
 				<nav id="nav">
 					<ul>
-						<li><a href="/" class="active">Inicio</a></li>
+						<li><a href="/">Inicio</a></li>
 						<li><a href="/registro">Registrarse</a></li>
+						<li><a href="/inicio">Iniciar sesión</a></li>
 					</ul>
 				</nav>
 				<footer>

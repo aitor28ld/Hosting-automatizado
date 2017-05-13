@@ -1,13 +1,13 @@
 % include('header.tpl')
-	<!-- One -->
+<!-- One -->
 		<section id="one">
 			<div class="container">
 				<header class="major">
-					<h2>Completado!</h2>
+					<h2>Error de inicio de sesión!</h2>
 				</header>
-				<p>Usuario <b>{{usuario}}</b> registrado con exito!</p>
+				<p>Contraseña o usuario incorrecto</p>
 			</div>
 		</section>
 	</div>
 
-% include('footer.tpl')			
+% include('header.tpl')
