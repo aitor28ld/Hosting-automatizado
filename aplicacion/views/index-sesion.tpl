@@ -1,11 +1,11 @@
 % include('header.tpl')
-<!-- One -->
+	<!-- One -->
 		<section id="one">
 			<div class="container">
 				<header class="major">
-					<h2>Inicio de sesión</h2>
+					<h2>Bienvenido {{usuario}}</h2>
 				</header>
-				<p><b>{{usuario}}</b> has iniciado sesión correctamente</p>
+				<p>Bienvenido a Spotype.</p>
 				<form action="/perfil">
 					<input type="submit" value="Ir a tu perfil" />
 				</form>
@@ -13,4 +13,4 @@
 		</section>
 	</div>
 
-% include('header.tpl')
+% include('footer.tpl')

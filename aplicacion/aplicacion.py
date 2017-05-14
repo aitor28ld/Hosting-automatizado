@@ -1,10 +1,18 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-from bottle import Bottle, route, run, request, template, default_app, static_file, get, post, response, redirect
+from bottle import Bottle, app, route, run, request, template, default_app, static_file, get, post, response, redirect
 import commands
 import json
 import getpass
 from ldap3 import Server, Connection, ALL
+from beaker.middleware import SessionMiddleware
+
+session_opts = {
+    'session.type': 'memory',
+    'session.cookie_expires': 300,
+    'session.auto': True
+}
+app = SessionMiddleware(app(), session_opts)
 
 usuario = "cn=admin,dc=spotype,dc=com"
 #Cambiar contraseña para no tener que ponerla transparente
@@ -16,7 +24,12 @@ conn = Connection(server, usuario, password, auto_bind=True)
 #Inicio de la aplicación
 @route('/')
 def raiz():
-	return template('index.tpl')
+	s = request.environ.get('beaker.session')
+	s.save()
+	if s.has_key('test'):
+		return template('index-sesion.tpl',usuario=s["test"][1])
+	else:
+		return template('index.tpl')
 
 #Creación de usuarios
 @route('/registro')
@@ -56,6 +69,7 @@ def inicio():
 
 @post('/login')
 def login():
+	s = request.environ.get('beaker.session')
 	usuario = request.forms.get('usuario')
 	password = request.forms.get('contraseña')
 	userldap = commands.getoutput('ldapsearch -x -w root -D "cn=admin,dc=spotype,dc=com" "(uid='+usuario+')" uid |grep uid | tail -1 |cut -d: -f2')
@@ -64,13 +78,22 @@ def login():
 	passldap = passldap.split(" ")[1]
 	passldap = commands.getoutput('echo -n '+passldap+' | base64 -d')
 	if usuario == userldap and password == passldap:
-		return template('login-ok.tpl', usuario=usuario)
+		s['test'] = ['login-ok.tpl',usuario]
+		s.save()
+		return template(s['test'][0], usuario=s['test'][1])
 	else:
-		return template ('login-error.tpl', usuario=usuario)
+		return template ('login-error.tpl')
+
+#Perfil de usuarios
+@get('/perfil')
+def perfil():
+	s = request.environ.get('beaker.session')
+	s.save()
+	return template('perfil.tpl', usuario=s['test'][1])
 
 #Ficheros estáticos
 @route('/static/<filepath:path>')
 def server_static(filepath):
     return static_file(filepath, root='static')
 
-run(host='192.168.1.110', port=8080)
+run(app=app,host='192.168.1.110', port=8080)

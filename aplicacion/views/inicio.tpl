@@ -3,8 +3,7 @@
 		<section id="one">
 			<div class="container">
 				<header class="major">
-					<h2>Registro</h2>
-					<p>Introduce los siguientes datos</p>
+					<h2>Iniciar sesión</h2>
 				</header>
 				<form action="login" method="post">
 					Usuario: <input name="usuario" type="text" /><br>
