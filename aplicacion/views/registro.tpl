@@ -13,6 +13,7 @@
 					Usuario: <input name="usuario" type="text" /><br>
 					Contraseña : <input name="password" type="password" /><br>
 					Email : <input name="email" type="text" /><br>
+					SSH Key: <input name="ssh" type="text" /><br>
 				<input value="Registrarse" type="submit" />
 			</form>
 			</div>
