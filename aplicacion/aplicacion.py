@@ -67,6 +67,7 @@ def prueba(usuario,password,email,nombre,apeuno,apedos):
 		commands.getoutput('sudo chgrp -R usuario /home/users/'+usuario+'/')
 		commands.getoutput('sudo chmod -R 770 /home/users/'+usuario)
 		commands.getoutput('echo "'+s["ssh"][0]+'" > /home/users/'+usuario+'/.ssh/id_rsa.pub')
+		commands.getoutput('sudo chmod 700 /home/users/'+usuario+'/.ssh/id_rsa.pub')
 		return template('sesion-valida.tpl', usuario=usuario)
 	else:
 		return template('sesion-error.tpl', usuario=usuario)
@@ -117,14 +118,39 @@ def github():
 	s.save()
 	g = Github(usuario,passw)
 	g.get_user().create_repo(repo)
-	redirect ('http://192.168.1.110:8080/git/'+ usuario +'/' +repo)
+	redirect ('http://192.168.1.110:8080/git/'+ usuario +'/' +repo+'/'+passw)
 
-@get('/git/<usuario>/<repo>')
-def git(usuario,repo):
+@get('/git/<usuario>/<repo>/<passw>')
+def git(usuario,repo,passw):
 	s = request.environ.get('beaker.session')
 	s.save()
-	commands.getoutput('sudo cd /home/users/'+s["sesion"][1]+' && git clone git@github.com:'+usuario+'/'+repo)
+	commands.getoutput('cd /home/users/'+s["sesion"][1]+' && git clone https://github.com/'+usuario+'/'+repo+'.git')
+	commands.getoutput('sudo echo "#Repositorio creado con la aplicación de Aitor28ld" >> /home/users/'+s["sesion"][1]+'/'+repo+'/README.md')
+	commands.getoutput('cd /home/users/'+s["sesion"][1]+'/'+repo+' && git init && git add README.md && git commit -m "Repositorio creado satisfactoriamente" && git branch --unset-upstream')
+	commands.getoutput('cd /home/users/'+s["sesion"][1]+'/'+repo+' && git remote set-url origin https://'+usuario+':'+passw+'@github.com/'+usuario+'/'+repo+'.git && git push -u origin master')
+	commands.getoutput('sudo chown usuario /etc/apache2/sites-* && sudo chmod -R o+rwx /home/users')
+	commands.getoutput('touch /etc/apache2/sites-available/'+s["sesion"][1]+'.conf')
+	commands.getoutput("""
+	sudo echo '<VirtualHost *:80>
+        ServerName """+usuario+""".spotype.com
+
+        ServerAdmin webmaster@localhost
+        DocumentRoot /home/users/"""+s["sesion"][1]+"""/"""+repo+"""
+
+        ErrorLog ${APACHE_LOG_DIR}/error.log
+        CustomLog ${APACHE_LOG_DIR}/access.log combined
+
+	</VirtualHost>' > /etc/apache2/sites-available/"""+s["sesion"][1]+'.conf')
+	commands.getoutput('cd /etc/apache2/sites-available && sudo a2ensite '+s["sesion"][1]+'.conf')
+	commands.getoutput('sudo /etc/init.d/apache2 reload')
+	commands.getoutput('sudo chown usuario /var/cache/bind/db.spotype')
+	commands.getoutput('sudo echo "'+usuario+' IN    CNAME    ansible" >> /var/cache/bind/db.spotype')
 	return template('git.tpl', repo = repo, usuario = usuario)
+
+#Plantilla sin crear
+@get('/webs')
+def webs():
+	return template('actualizarweb.tpl')
 
 #Ficheros estáticos
 @route('/static/<filepath:path>')

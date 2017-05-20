@@ -8,7 +8,11 @@
 				<h4>Acciones para hacer</h4>
 				<ul>
 					<li><form action="/web">
-							<input type="submit" value="Subir página web/CMS" />
+							<input type="submit" value="Crear repositorio" />
+						</form>
+					</li>
+					<li><form action="/webs">
+							<input type="submit" value="Ir tú página web" />
 						</form>
 					</li>
 					<li><form action="/phpmyadmin">
