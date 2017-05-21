@@ -12,7 +12,11 @@
 						</form>
 					</li>
 					<li><form action="/webs">
-							<input type="submit" value="Ir tú página web" />
+							<input type="submit" value="Actualizar repositorio" />
+						</form>
+					</li>
+					<li><form action="/page">
+							<input type="submit" value="Ir a tu página web" />
 						</form>
 					</li>
 					<li><form action="/phpmyadmin">

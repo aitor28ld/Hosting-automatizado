@@ -129,6 +129,7 @@ def github():
 	passw = request.forms.get('password')
 	repo = request.forms.get('repo')
 	s = request.environ.get('beaker.session')
+	s["github"] = [usuario,passw,repo]
 	s.save()
 	#Logueo en Github
 	g = Github(usuario,passw)
@@ -143,7 +144,7 @@ def git(usuario,repo,passw):
 	#Clonamos el repositorio anteriormente creado
 	commands.getoutput('cd /home/users/'+s["sesion"][1]+' && git clone https://github.com/'+usuario+'/'+repo+'.git')
 	#Creamos un fichero README.md en el repositorio
-	commands.getoutput('sudo echo "#Repositorio creado con la aplicación de Aitor28ld" >> /home/users/'+s["sesion"][1]+'/'+repo+'/README.md')
+	commands.getoutput('sudo echo "#Repositorio creado con la aplicación de Aitor28ld" > /home/users/'+s["sesion"][1]+'/'+repo+'/README.md')
 	#Inicializamos el repositorio, añadimos el fichero y lo comentamos
 	commands.getoutput('cd /home/users/'+s["sesion"][1]+'/'+repo+' && git init && git add README.md && git commit -m "Repositorio creado satisfactoriamente" && git branch --unset-upstream')
 	#Establecemos las credenciales de usuario y subimos los cambios del repositorio
@@ -152,10 +153,10 @@ def git(usuario,repo,passw):
 	commands.getoutput('touch /etc/apache2/sites-available/'+s["sesion"][1]+'.conf')
 	commands.getoutput("""
 	sudo echo '<VirtualHost *:80>
-        ServerName """+usuario+""".spotype.com
+        ServerName """+s["sesion"][1]+""".spotype.com
 
         ServerAdmin webmaster@localhost
-        DocumentRoot /home/users/"""+s["sesion"][1]+"""/"""+repo+"""
+        DocumentRoot /home/users/"""+s["sesion"][1]+"""
 
         ErrorLog ${APACHE_LOG_DIR}/error.log
         CustomLog ${APACHE_LOG_DIR}/access.log combined
@@ -164,13 +165,39 @@ def git(usuario,repo,passw):
 	commands.getoutput('cd /etc/apache2/sites-available && sudo a2ensite '+s["sesion"][1]+'.conf')
 	commands.getoutput('sudo /etc/init.d/apache2 reload')
 	commands.getoutput('sudo chown usuario /var/cache/bind/db.spotype')
-	commands.getoutput('sudo echo "'+usuario+' IN    CNAME    ansible" >> /var/cache/bind/db.spotype')
-	return template('git.tpl', repo = repo, usuario = usuario)
+	DNS = commands.getoutput('cat /var/cache/bind/db.spotype | grep '+s["sesion"][1])
+	if DNS == "":
+		commands.getoutput('sudo echo "'+s["sesion"][1]+' IN    CNAME    ansible" >> /var/cache/bind/db.spotype')
+		return template('git.tpl', repo = repo, usuario = usuario)
+	else:
+		return template('git.tpl', repo = repo, usuario = usuario)
 
-#Plantilla sin crear aun
+#Actualizar repositorios e ir directamente a la web del usuario
 @get('/webs')
 def webs():
-	return template('actualizarweb.tpl')
+	return template('webs.tpl')
+
+@post('/repos')
+def repos():
+	s = request.environ.get('beaker.session')
+	usuario = request.forms.get('usuario')
+	con = request.forms.get('password')
+	repositorio = request.forms.get('repositorio')
+	s["repos"] = [usuario,con,repositorio]
+	s.save()
+	
+	redirect('/repositorios')
+	
+@get('/repositorios')
+def repositorios():
+	s = request.environ.get('beaker.session')
+	commands.getoutput('cd /home/users/'+s["sesion"][1]+'/'+s["repos"][2]+' && git pull')
+	redirect ('http://'+s["sesion"][1]+'.spotype.com')
+	
+@get('/page')
+def page():
+	s = request.environ.get('beaker.session')
+	redirect('http://'+s["sesion"][1]+'.spotype.com')
 
 #Ficheros estáticos
 @route('/static/<filepath:path>')
