@@ -8,6 +8,7 @@ from ldap3 import Server, Connection, ALL
 from beaker.middleware import SessionMiddleware
 from github import Github
 
+#Sesiones de usuarios con tiempo de 5 min guardados en memoria
 session_opts = {
     'session.type': 'memory',
     'session.cookie_expires': 300,
@@ -15,6 +16,7 @@ session_opts = {
 }
 app = SessionMiddleware(app(), session_opts)
 
+# Definimos el usuario y su contraseña para iniciar una conexión con el servicio LDAP
 usuario = "cn=admin,dc=spotype,dc=com"
 #Cambiar contraseña para no tener que ponerla transparente
 password = 'root'
@@ -27,16 +29,20 @@ conn = Connection(server, usuario, password, auto_bind=True)
 def raiz():
 	s = request.environ.get('beaker.session')
 	s.save()
+	#Si existe una sesión, se entra en ella, sino entra cómo anonimo
 	if s.has_key('sesion'):
 		return template('index-sesion.tpl',usuario=s["sesion"][1])
 	else:
 		return template('index.tpl')
 
 #Creación de usuarios
+# Este route contiene la plantilla dónde el usuario introducirá sus datos
 @route('/registro')
 def registro():
 	return template('registro.tpl')
 
+# Cogemos los datos desde la plantilla y los guardamos en variables para despues, con REDIRECT,
+# enviarlo y así crearle el usuario
 @post('/sesion')
 def sesion():
 	usuario = request.forms.get('usuario')
@@ -46,11 +52,14 @@ def sesion():
 	apeuno = request.forms.get('apeuno')
 	apedos = request.forms.get('apedos')
 	ssh = request.forms.get('ssh')
+	# Guardamos la clave ssh en la sesión del usuario
 	s = request.environ.get('beaker.session')
 	s["ssh"] = [ssh]
 	s.save()
 	redirect ('http://192.168.1.110:8080/prueba/'+usuario+'/'+password+'/'+email+'/'+nombre+'/'+apeuno+'/'+apedos)
 	
+# Con rutas dinámicas, guardamos los datos y procedemos a realizar la petición al servicio LDAP 
+# para crear el usuario
 @route('/prueba/<usuario>/<password>/<email>/<nombre>/<apeuno>/<apedos>')
 def prueba(usuario,password,email,nombre,apeuno,apedos):
 	s = request.environ.get('beaker.session')
@@ -58,6 +67,9 @@ def prueba(usuario,password,email,nombre,apeuno,apedos):
 	objectclass = ["inetOrgPerson","posixAccount","person","top","ldapPublicKey"]
 	atributos = {"cn":nombre+" "+apeuno+" "+apedos,"sn":apeuno+" "+apedos,"userPassword":password,"mail":email,"uid":usuario,"uidNumber":20000 ,"gidNumber":20000,"homeDirectory":"/home/users/"+usuario,"sshPublicKey": s["ssh"]}
 	conexion = conn.add(uid,objectclass,atributos)
+	
+	# Si la conexión se ha establecido y ha creado al usuario, le creamos su directorio y le damos sus 
+	# correspondientes permisos, sino se le envía una alerta de error
 	if conexion == True:
 		commands.getoutput('sudo mkdir /home/users/'+usuario)
 		uid = commands.getoutput('ldapsearch -x -w root -D "cn=admin,dc=spotype,dc=com" "(uid='+usuario+')" uidNumber |grep uid | tail -1 |cut -d: -f2')
@@ -79,6 +91,7 @@ def inicio():
 
 @post('/login')
 def login():
+	#Abrimos la sesión del usuario
 	s = request.environ.get('beaker.session')
 	usuario = request.forms.get('usuario')
 	password = request.forms.get('contraseña')
@@ -89,6 +102,7 @@ def login():
 		passldap = passldap.split(" ")[1]
 		passldap = commands.getoutput('echo -n '+passldap+' | base64 -d')
 		if usuario == userldap and password == passldap:
+			#Añadimos la plantilla y el usuario a la sesión para después devolverla y enviarle el usuario
 			s['sesion'] = ['login-ok.tpl',usuario]
 			s.save()
 			return template(s['sesion'][0], usuario=s['sesion'][1])
@@ -116,7 +130,9 @@ def github():
 	repo = request.forms.get('repo')
 	s = request.environ.get('beaker.session')
 	s.save()
+	#Logueo en Github
 	g = Github(usuario,passw)
+	#Creamos el repositorio en Github
 	g.get_user().create_repo(repo)
 	redirect ('http://192.168.1.110:8080/git/'+ usuario +'/' +repo+'/'+passw)
 
@@ -124,9 +140,13 @@ def github():
 def git(usuario,repo,passw):
 	s = request.environ.get('beaker.session')
 	s.save()
+	#Clonamos el repositorio anteriormente creado
 	commands.getoutput('cd /home/users/'+s["sesion"][1]+' && git clone https://github.com/'+usuario+'/'+repo+'.git')
+	#Creamos un fichero README.md en el repositorio
 	commands.getoutput('sudo echo "#Repositorio creado con la aplicación de Aitor28ld" >> /home/users/'+s["sesion"][1]+'/'+repo+'/README.md')
+	#Inicializamos el repositorio, añadimos el fichero y lo comentamos
 	commands.getoutput('cd /home/users/'+s["sesion"][1]+'/'+repo+' && git init && git add README.md && git commit -m "Repositorio creado satisfactoriamente" && git branch --unset-upstream')
+	#Establecemos las credenciales de usuario y subimos los cambios del repositorio
 	commands.getoutput('cd /home/users/'+s["sesion"][1]+'/'+repo+' && git remote set-url origin https://'+usuario+':'+passw+'@github.com/'+usuario+'/'+repo+'.git && git push -u origin master')
 	commands.getoutput('sudo chown usuario /etc/apache2/sites-* && sudo chmod -R o+rwx /home/users')
 	commands.getoutput('touch /etc/apache2/sites-available/'+s["sesion"][1]+'.conf')
@@ -147,7 +167,7 @@ def git(usuario,repo,passw):
 	commands.getoutput('sudo echo "'+usuario+' IN    CNAME    ansible" >> /var/cache/bind/db.spotype')
 	return template('git.tpl', repo = repo, usuario = usuario)
 
-#Plantilla sin crear
+#Plantilla sin crear aun
 @get('/webs')
 def webs():
 	return template('actualizarweb.tpl')
