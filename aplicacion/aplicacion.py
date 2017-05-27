@@ -67,26 +67,55 @@ def sesion():
 @route('/prueba/<usuario>/<password>/<email>/<nombre>/<apeuno>/<apedos>')
 def prueba(usuario,password,email,nombre,apeuno,apedos):
 	s = request.environ.get('beaker.session')
-	uid = "uid="+usuario+",ou=People,dc=spotype,dc=com"
-	objectclass = ["inetOrgPerson","posixAccount","person","top","ldapPublicKey"]
-	atributos = {"cn":nombre+" "+apeuno+" "+apedos,"sn":apeuno+" "+apedos,"userPassword":password,"mail":email,"uid":usuario,"uidNumber":20000 ,"gidNumber":20000,"homeDirectory":"/home/users/"+usuario,"sshPublicKey": s["ssh"]}
-	conexion = conn.add(uid,objectclass,atributos)
+	numuid = []
+	numuid.append(commands.getoutput('ldapsearch -x -w root -D "cn=admin,dc=spotype,dc=com" "(uidNumber=*)" | grep uidNumber | grep -v "# filter"'))
+	if numuid[0] != "":
+		for i in numuid:
+			num2 = i.split("\n")
+			num3 = int(max(num2).split(": ")[1])+1
+			uid = "uid="+usuario+",ou=People,dc=spotype,dc=com"
+			objectclass = ["inetOrgPerson","posixAccount","person","top","ldapPublicKey"]
+			atributos = {"cn":nombre+" "+apeuno+" "+apedos,"sn":apeuno+" "+apedos,"userPassword":password,"mail":email,"uid":usuario,"uidNumber":num3 ,"gidNumber":num3 ,"homeDirectory":"/home/users/"+usuario,"sshPublicKey": s["ssh"]}
+			conexion = conn.add(uid,objectclass,atributos)
 	
-	# Si la conexión se ha establecido y ha creado al usuario, le creamos su directorio y le damos sus 
-	# correspondientes permisos, sino se le envía una alerta de error
-	if conexion == True:
-		commands.getoutput('sudo mkdir /home/users/'+usuario)
-		uid = commands.getoutput('ldapsearch -x -w root -D "cn=admin,dc=spotype,dc=com" "(uid='+usuario+')" uidNumber |grep uid | tail -1 |cut -d: -f2')
-		uid = uid.split(" ")[1]
-		commands.getoutput('sudo chown '+uid+' /home/users/'+usuario)
-		commands.getoutput('sudo mkdir /home/users/'+usuario+'/.ssh/')
-		commands.getoutput('sudo chgrp -R usuario /home/users/'+usuario+'/')
-		commands.getoutput('sudo chmod -R 770 /home/users/'+usuario)
-		commands.getoutput('echo "'+s["ssh"][0]+'" > /home/users/'+usuario+'/.ssh/id_rsa.pub')
-		commands.getoutput('sudo chmod 700 /home/users/'+usuario+'/.ssh/id_rsa.pub')
-		return template('sesion-valida.tpl', usuario=usuario)
+			# Si la conexión se ha establecido y ha creado al usuario, le creamos su directorio y le damos sus 
+			# correspondientes permisos, sino se le envía una alerta de error
+			if conexion == True:
+				commands.getoutput('sudo mkdir /home/users/'+usuario)
+				uid = commands.getoutput('ldapsearch -x -w root -D "cn=admin,dc=spotype,dc=com" "(uid='+usuario+')" uidNumber |grep uid | tail -1 |cut -d: -f2')
+				uid = uid.split(" ")[1]
+				commands.getoutput('sudo chown '+uid+' /home/users/'+usuario)
+				commands.getoutput('sudo mkdir /home/users/'+usuario+'/.ssh/')
+				commands.getoutput('sudo chgrp -R usuario /home/users/'+usuario+'/')
+				commands.getoutput('sudo chmod -R 770 /home/users/'+usuario)
+				commands.getoutput('echo "'+s["ssh"][0]+'" > /home/users/'+usuario+'/.ssh/id_rsa.pub')
+				commands.getoutput('sudo chmod 700 /home/users/'+usuario+'/.ssh/id_rsa.pub')
+				return template('sesion-valida.tpl', usuario=usuario)
+				#break
+			else:
+				return template('sesion-error.tpl', usuario=usuario)
+				#break
 	else:
-		return template('sesion-error.tpl', usuario=usuario)
+		uid = "uid="+usuario+",ou=People,dc=spotype,dc=com"
+		objectclass = ["inetOrgPerson","posixAccount","person","top","ldapPublicKey"]
+		atributos = {"cn":nombre+" "+apeuno+" "+apedos,"sn":apeuno+" "+apedos,"userPassword":password,"mail":email,"uid":usuario,"uidNumber":20000 ,"gidNumber":20000,"homeDirectory":"/home/users/"+usuario,"sshPublicKey": s["ssh"]}
+		conexion = conn.add(uid,objectclass,atributos)
+	
+		# Si la conexión se ha establecido y ha creado al usuario, le creamos su directorio y le damos sus 
+		# correspondientes permisos, sino se le envía una alerta de error
+		if conexion == True:
+			commands.getoutput('sudo mkdir /home/users/'+usuario)
+			uid = commands.getoutput('ldapsearch -x -w root -D "cn=admin,dc=spotype,dc=com" "(uid='+usuario+')" uidNumber |grep uid | tail -1 |cut -d: -f2')
+			uid = uid.split(" ")[1]
+			commands.getoutput('sudo chown '+uid+' /home/users/'+usuario)
+			commands.getoutput('sudo mkdir /home/users/'+usuario+'/.ssh/')
+			commands.getoutput('sudo chgrp -R usuario /home/users/'+usuario+'/')
+			commands.getoutput('sudo chmod -R 770 /home/users/'+usuario)
+			commands.getoutput('echo "'+s["ssh"][0]+'" > /home/users/'+usuario+'/.ssh/id_rsa.pub')
+			commands.getoutput('sudo chmod 700 /home/users/'+usuario+'/.ssh/id_rsa.pub')
+			return template('sesion-valida.tpl', usuario=usuario)
+		else:
+			return template('sesion-error.tpl', usuario=usuario)
 
 # Logueos de usuarios
 @route('/inicio')
