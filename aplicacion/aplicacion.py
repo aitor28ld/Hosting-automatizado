@@ -8,7 +8,7 @@ from ldap3 import Server, Connection, ALL
 from beaker.middleware import SessionMiddleware
 from github import Github
 
-#Sesiones de usuarios con tiempo de 5 min guardados en memoria
+# Sesiones de usuarios con tiempo de 5 min guardados en memoria
 session_opts = {
     'session.type': 'memory',
     'session.cookie_expires': 300,
@@ -18,24 +18,23 @@ app = SessionMiddleware(app(), session_opts)
 
 # Definimos el usuario y su contraseña para iniciar una conexión con el servicio LDAP
 usuario = "cn=admin,dc=spotype,dc=com"
-#Cambiar contraseña para no tener que ponerla transparente
+# Cambiar contraseña para no tener que ponerla transparente
 password = 'root'
 
 server = Server("192.168.1.110", get_info=ALL)
 conn = Connection(server, usuario, password, auto_bind=True)
 
-#Inicio de la aplicación
+# Inicio de la aplicación
 @route('/')
 def raiz():
 	s = request.environ.get('beaker.session')
-	s.save()
 	#Si existe una sesión, se entra en ella, sino entra cómo anonimo
 	if s.has_key('sesion'):
 		return template('index-sesion.tpl',usuario=s["sesion"][1])
 	else:
 		return template('index.tpl')
 
-#Creación de usuarios
+# Creación de usuarios
 # Este route contiene la plantilla dónde el usuario introducirá sus datos
 @route('/registro')
 def registro():
@@ -52,9 +51,14 @@ def sesion():
 	apeuno = request.forms.get('apeuno')
 	apedos = request.forms.get('apedos')
 	ssh = request.forms.get('ssh')
+	usuariogit = request.forms.get('usuariogit')
+	con = request.forms.get('contra')
 	# Guardamos la clave ssh en la sesión del usuario
 	s = request.environ.get('beaker.session')
 	s["ssh"] = [ssh]
+	# Guardamos los datos de github en la sesión del usuario
+	s["repos"] = [usuariogit, con]
+	s["github"] = [usuariogit, con]
 	s.save()
 	redirect ('http://192.168.1.110:8080/prueba/'+usuario+'/'+password+'/'+email+'/'+nombre+'/'+apeuno+'/'+apedos)
 	
@@ -84,14 +88,14 @@ def prueba(usuario,password,email,nombre,apeuno,apedos):
 	else:
 		return template('sesion-error.tpl', usuario=usuario)
 
-#Logueos de usuarios
+# Logueos de usuarios
 @route('/inicio')
 def inicio():
 	return template('inicio.tpl')
 
 @post('/login')
 def login():
-	#Abrimos la sesión del usuario
+	# Abrimos la sesión del usuario
 	s = request.environ.get('beaker.session')
 	usuario = request.forms.get('usuario')
 	password = request.forms.get('contraseña')
@@ -102,7 +106,7 @@ def login():
 		passldap = passldap.split(" ")[1]
 		passldap = commands.getoutput('echo -n '+passldap+' | base64 -d')
 		if usuario == userldap and password == passldap:
-			#Añadimos la plantilla y el usuario a la sesión para después devolverla y enviarle el usuario
+			# Añadimos la plantilla y el usuario a la sesión para después devolverla y enviarle el usuario
 			s['sesion'] = ['login-ok.tpl',usuario]
 			s.save()
 			return template(s['sesion'][0], usuario=s['sesion'][1])
@@ -111,18 +115,33 @@ def login():
 	else:
 		return template ('login-error.tpl')
 
-#Perfil de usuarios
+# Perfil de usuarios
 @get('/perfil')
 def perfil():
 	s = request.environ.get('beaker.session')
-	s.save()
 	return template('perfil.tpl', usuario=s['sesion'][1])
 	
-#Subir CMS con repositorio
+# Subir CMS con repositorio
 @get('/web')
 def web():
-	return template('web.tpl')
+	s = request.environ.get('beaker.session')
+	if s.has_key('github'):
+		return template('web-git.tpl')
+	else:
+		return template('web.tpl')
 	
+@post('/githubok')
+def github():
+	repo = request.forms.get('repo')
+	s = request.environ.get('beaker.session')
+	s["github"].append(repo)
+	s.save()
+	# Logueo en Github
+	g = Github(s["github"][0],s["github"][1])
+	# Creamos el repositorio en Github
+	g.get_user().create_repo(s["github"][2])
+	redirect ('/git')
+
 @post('/github')
 def github():
 	usuario = request.forms.get('usuario')
@@ -131,24 +150,23 @@ def github():
 	s = request.environ.get('beaker.session')
 	s["github"] = [usuario,passw,repo]
 	s.save()
-	#Logueo en Github
+	# Logueo en Github
 	g = Github(usuario,passw)
-	#Creamos el repositorio en Github
+	# Creamos el repositorio en Github
 	g.get_user().create_repo(repo)
-	redirect ('http://192.168.1.110:8080/git/'+ usuario +'/' +repo+'/'+passw)
+	redirect ('http://192.168.1.110:8080/git')
 
-@get('/git/<usuario>/<repo>/<passw>')
-def git(usuario,repo,passw):
+@get('/git')
+def git():
 	s = request.environ.get('beaker.session')
-	s.save()
-	#Clonamos el repositorio anteriormente creado
-	commands.getoutput('cd /home/users/'+s["sesion"][1]+' && git clone https://github.com/'+usuario+'/'+repo+'.git')
-	#Creamos un fichero README.md en el repositorio
-	commands.getoutput('sudo echo "#Repositorio creado con la aplicación de Aitor28ld" > /home/users/'+s["sesion"][1]+'/'+repo+'/README.md')
-	#Inicializamos el repositorio, añadimos el fichero y lo comentamos
-	commands.getoutput('cd /home/users/'+s["sesion"][1]+'/'+repo+' && git init && git add README.md && git commit -m "Repositorio creado satisfactoriamente" && git branch --unset-upstream')
-	#Establecemos las credenciales de usuario y subimos los cambios del repositorio
-	commands.getoutput('cd /home/users/'+s["sesion"][1]+'/'+repo+' && git remote set-url origin https://'+usuario+':'+passw+'@github.com/'+usuario+'/'+repo+'.git && git push -u origin master')
+	# Clonamos el repositorio anteriormente creado
+	commands.getoutput('cd /home/users/'+s["sesion"][1]+' && git clone https://github.com/'+s["github"][0]+'/'+s["github"][2]+'.git')
+	# Creamos un fichero README.md en el repositorio
+	commands.getoutput('sudo echo "#Repositorio creado con la aplicación de Aitor28ld" > /home/users/'+s["sesion"][1]+'/'+s["github"][2]+'/README.md')
+	# Inicializamos el repositorio, añadimos el fichero y lo comentamos
+	commands.getoutput('cd /home/users/'+s["sesion"][1]+'/'+s["github"][2]+' && git init && git add README.md && git commit -m "Repositorio creado satisfactoriamente" && git branch --unset-upstream')
+	# Establecemos las credenciales de usuario y subimos los cambios del repositorio
+	commands.getoutput('cd /home/users/'+s["sesion"][1]+'/'+s["github"][2]+' && git remote set-url origin https://'+s["github"][0]+':'+s["github"][1]+'@github.com/'+s["github"][0]+'/'+s["github"][2]+'.git && git push -u origin master')
 	commands.getoutput('sudo chown usuario /etc/apache2/sites-* && sudo chmod -R o+rwx /home/users')
 	commands.getoutput('touch /etc/apache2/sites-available/'+s["sesion"][1]+'.conf')
 	commands.getoutput("""
@@ -168,17 +186,31 @@ def git(usuario,repo,passw):
 	DNS = commands.getoutput('cat /var/cache/bind/db.spotype | grep '+s["sesion"][1])
 	if DNS == "":
 		commands.getoutput('sudo echo "'+s["sesion"][1]+' IN    CNAME    ansible" >> /var/cache/bind/db.spotype')
-		return template('git.tpl', repo = repo, usuario = usuario)
+		return template('git.tpl', repo = s["github"][2], usuario = s["github"][0])
 	else:
-		return template('git.tpl', repo = repo, usuario = usuario)
+		return template('git.tpl', repo = s["github"][2], usuario = s["github"][0])
 
-#Actualizar repositorios e ir directamente a la web del usuario
+# Actualizar repositorios e ir directamente a la web del usuario
 @get('/webs')
 def webs():
-	return template('webs.tpl')
+	s = request.environ.get('beaker.session')
+	# Si existe una sesión, se entra en ella, sino entra cómo anonimo
+	if s.has_key('github'):
+		return template('webs-git.tpl')
+	else:
+		return template('webs.tpl')
+	
+@post('/reposok')
+def repos():
+	s = request.environ.get('beaker.session')
+	repositorio = request.forms.get('repositorio')
+	if repositorio == s["github"][2]:
+		redirect('/repositorios')
+	else:
+		return "Error de repositorio"
 
 @post('/repos')
-def repos():
+def reposok():
 	s = request.environ.get('beaker.session')
 	usuario = request.forms.get('usuario')
 	con = request.forms.get('password')
@@ -191,15 +223,28 @@ def repos():
 @get('/repositorios')
 def repositorios():
 	s = request.environ.get('beaker.session')
-	commands.getoutput('cd /home/users/'+s["sesion"][1]+'/'+s["repos"][2]+' && git pull')
-	redirect ('http://'+s["sesion"][1]+'.spotype.com')
-	
+	if s.has_key('github'):
+		commands.getoutput('cd /home/users/'+s["sesion"][1]+'/'+s["github"][2]+' && git pull')
+		redirect ('http://'+s["sesion"][1]+'.spotype.com')
+	elif s.has_key('repos'):
+		commands.getoutput('cd /home/users/'+s["sesion"][1]+'/'+s["repos"][2]+' && git pull')
+		redirect ('http://'+s["sesion"][1]+'.spotype.com')
+	else:
+		return "Error de clave"
+
+# Ir a la web directamente
 @get('/page')
 def page():
 	s = request.environ.get('beaker.session')
 	redirect('http://'+s["sesion"][1]+'.spotype.com')
 
-#Ficheros estáticos
+# Eliminación de repositorios
+
+# Eliminación de BD
+
+# Eliminación de usuarios
+
+# Ficheros estáticos
 @route('/static/<filepath:path>')
 def server_static(filepath):
     return static_file(filepath, root='static')
