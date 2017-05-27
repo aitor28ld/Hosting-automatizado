@@ -267,11 +267,53 @@ def page():
 	s = request.environ.get('beaker.session')
 	redirect('http://'+s["sesion"][1]+'.spotype.com')
 
+# Crear BD
+@get('/mysql')
+def crearmysql():
+	return template ('crear-mysql.tpl')
+
+@post('/crearmysql')
+def mysql():
+	usuario = request.forms.get('user')
+	contras = request.forms.get('contras')
+	nombrebd = request.forms.get('bd')
+	commands.getoutput('echo \#\!/bin/bash > /home/usuario/bd.sh && sudo chmod u+x /home/usuario/bd.sh')
+	commands.getoutput("""echo "create user """+usuario+"""@localhost identified by '"""+contras+"""';" >> /home/usuario/bd.sh""")
+	commands.getoutput('''echo "create database '''+nombrebd+''';" >> /home/usuario/bd.sh ''')
+	commands.getoutput("""echo "grant all privileges on """+nombrebd+""".* to """+usuario+"""@localhost identified by '"""+contras+"""' with grant option;" >> /home/usuario/bd.sh""")
+	commands.getoutput('mysql -u root -proot < /home/usuario/bd.sh')
+	return template('mysql.tpl', nombrebd = nombrebd, usuario = usuario)
+
+# Administrar BD con phpmyadmin
+@get('/phpmyadmin')
+def phpmyadmin():
+	redirect ('http://phpmyadmin.spotype.com')
+
 # Eliminación de repositorios
+@get('/delweb')
+def delweb():
+	return template('delweb.tpl')
+
+@post('/delgit')
+def delgit():
+	s = request.environ.get('beaker.session')
+	rep = request.forms.get('repo')
+	if s.has_key('github'):
+		g = Github(s['github'][0],s['github'][1])
+		g.get_user().get_repo(s['github'][2]).delete()
+		return template ('delgit.tpl')
+	elif s.has_key('repos'):
+		g = Github(s['repos'][0],s['repos'][1])
+		g.get_user().get_repo(s['repos'][2]).delete()
+		return template ('delgit.tpl')
+	else:
+		return "Sesión inexistente"
 
 # Eliminación de BD
 
+
 # Eliminación de usuarios
+
 
 # Ficheros estáticos
 @route('/static/<filepath:path>')

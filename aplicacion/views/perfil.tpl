@@ -19,6 +19,10 @@
 							<input type="submit" value="Ir a tu página web" />
 						</form>
 					</li>
+					<li><form action="/mysql">
+							<input type="submit" value="Crear Base de Datos" />
+						</form>
+					</li>
 					<li><form action="/phpmyadmin">
 							<input type="submit" value="Administrar Base de Datos" />
 						</form>
