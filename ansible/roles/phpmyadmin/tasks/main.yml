@@ -1,7 +1,7 @@
-- name: Include OS-specific variables.
+- name: Variables de phpmyadmin
   include_vars: "main.yml"
 
-- name: Define phpmyadmin_config_file.
+- name: Fichero de configuración de phpmyadmin
   set_fact:
     phpmyadmin_config_file: "{{ __phpmyadmin_config_file }}"
   when: phpmyadmin_config_file is not defined
@@ -9,7 +9,7 @@
 - include: setup-Debian.yml
   when: ansible_os_family == 'Debian'
 
-- name: Add default username and password for MySQL connection.
+- name: Añadimos usuario y contraseñas root para la conexión con mysql
   lineinfile: >
     dest={{ phpmyadmin_config_file }}
     state=present
