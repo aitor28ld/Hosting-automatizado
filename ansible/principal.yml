@@ -7,4 +7,5 @@
     - dns
     - serweb
     - bd
+    - phpmyadmin
     - { role: ldap }

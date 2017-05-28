@@ -8,8 +8,16 @@
     group: root
     mode: 644
 
-- name: Habilitando el sitio de Spotype.com
+- copy:
+    src: phpmyadmin.conf
+    dest: /etc/apache2/sites-available/phpmyadmin.conf
+    owner: root
+    group: root
+    mode: 644
+
+- name: Habilitando el sitio de Spotype.com y phpmyadmin
   shell: sudo a2ensite spotype.conf
+  shell: sudo a2ensite phpmyadmin.conf
 
 - name: Haibilitando modulos de apache2
   action: command a2enmod rewrite
