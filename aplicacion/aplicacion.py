@@ -91,10 +91,8 @@ def prueba(usuario,password,email,nombre,apeuno,apedos):
 				commands.getoutput('echo "'+s["ssh"][0]+'" > /home/users/'+usuario+'/.ssh/id_rsa.pub')
 				commands.getoutput('sudo chmod 700 /home/users/'+usuario+'/.ssh/id_rsa.pub')
 				return template('sesion-valida.tpl', usuario=usuario)
-				#break
 			else:
 				return template('sesion-error.tpl', usuario=usuario)
-				#break
 	else:
 		uid = "uid="+usuario+",ou=People,dc=spotype,dc=com"
 		objectclass = ["inetOrgPerson","posixAccount","person","top","ldapPublicKey"]
@@ -223,7 +221,6 @@ def git():
 @get('/webs')
 def webs():
 	s = request.environ.get('beaker.session')
-	# Si existe una sesión, se entra en ella, sino entra cómo anonimo
 	if s.has_key('github'):
 		return template('webs-git.tpl')
 	else:
@@ -236,7 +233,7 @@ def repos():
 	if repositorio == s["github"][2]:
 		redirect('/repositorios')
 	else:
-		return "Error de repositorio"
+		return template ('err-repo.tpl')
 
 @post('/repos')
 def reposok():
@@ -259,7 +256,7 @@ def repositorios():
 		commands.getoutput('cd /home/users/'+s["sesion"][1]+'/'+s["repos"][2]+' && git pull')
 		redirect ('http://'+s["sesion"][1]+'.spotype.com')
 	else:
-		return "Error de clave"
+		return template('err-key.tpl')
 
 # Ir a la web directamente
 @get('/page')
@@ -277,6 +274,7 @@ def mysql():
 	usuario = request.forms.get('user')
 	contras = request.forms.get('contras')
 	nombrebd = request.forms.get('bd')
+	# Creamos el fichero que después será inyectado a mysql
 	commands.getoutput('echo \#\!/bin/bash > /home/usuario/bd.sh && sudo chmod u+x /home/usuario/bd.sh')
 	commands.getoutput("""echo "create user """+usuario+"""@localhost identified by '"""+contras+"""';" >> /home/usuario/bd.sh""")
 	commands.getoutput('''echo "create database '''+nombrebd+''';" >> /home/usuario/bd.sh ''')
@@ -298,6 +296,8 @@ def delweb():
 def delgit():
 	s = request.environ.get('beaker.session')
 	rep = request.forms.get('repo')
+	# Dependiendo de la sesión iniciada por el usuario, devolverá una u otra con sus datos, sino,
+	# dará error
 	if s.has_key('github'):
 		g = Github(s['github'][0],s['github'][1])
 		g.get_user().get_repo(s['github'][2]).delete()
@@ -307,13 +307,36 @@ def delgit():
 		g.get_user().get_repo(s['repos'][2]).delete()
 		return template ('delgit.tpl')
 	else:
-		return "Sesión inexistente"
+		return template ('no-sesion.tpl')
 
 # Eliminación de BD
+@get('/delbd')
+def defbd():
+	return template('delbd.tpl')
 
+@post('/deletebd')
+def deletebd():
+	# Guardamos el usuario y el nombre de la BD para luego, mediante un fichero, inyectarlo a
+	# mysql y así permitir la eliminación del usuario y BD
+	usuario = request.forms.get('user')
+	nombrebd = request.forms.get('bd')
+	commands.getoutput('echo \#\!/bin/bash > /home/usuario/delbd.sh && sudo chmod u+x /home/usuario/delbd.sh')
+	commands.getoutput("""echo "drop user """+usuario+"""@localhost;" >> /home/usuario/delbd.sh""")
+	commands.getoutput("""echo "drop database """+nombrebd+""";" >> /home/usuario/delbd.sh""")
+	commands.getoutput('mysql -u root -proot < /home/usuario/delbd.sh')
+	
+	return template ('deletebd.tpl', usuario = usuario, bd = nombrebd)
 
 # Eliminación de usuarios
-
+@get('/delaccount')
+def delaccount():
+	s = request.environ.get('beaker.session')
+	usuario = s['sesion'][1]
+	conn.delete("uid="+s["sesion"][1]+",ou=People,dc=spotype,dc=com")
+	# Eliminamos la sesión que el usuario tiene abierta
+	s.delete()
+	return template ('delacc.tpl', usuario = usuario)
+	
 
 # Ficheros estáticos
 @route('/static/<filepath:path>')

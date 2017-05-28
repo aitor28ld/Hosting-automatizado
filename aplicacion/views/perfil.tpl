@@ -31,6 +31,10 @@
 							<input type="submit" value="Eliminar web/CMS" />
 						</form>
 					</li>
+					<li><form action="/delbd">
+							<input type="submit" value="Eliminar BD" />
+						</form>
+					</li>
 					<li><form action="/delaccount">
 							<input type="submit" value="Eliminar cuenta" />
 						</form>
