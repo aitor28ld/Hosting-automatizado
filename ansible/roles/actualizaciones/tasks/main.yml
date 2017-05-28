@@ -8,19 +8,29 @@
 - copy:
     src: ldap3-master.zip
     dest: /home/usuario/Plantillas/ldap3-master.zip
-    owner: root
-    group: root
-    mode: 644
 
 - copy:
     src: PyGithub-master.zip                     
     dest: /home/usuario/Plantillas/PyGithub-master.zip
-    owner: root
-    group: root
-    mode: 644
 
-- name: Instalación de LDAP y PyGithub para la aplicación
-  shell: cd /home/usuario/Plantillas && unzip ldap3-master.zip
-  shell: cd /home/usuario/Plantillas/ldap3-master && python setup.py install
-  shell: cd /home/usuario/Plantillas && unzip PyGithub-master.zip
-  shell: cd /home/usuario/Plantillas/PyGithub-master && python setup.py install
+- name: Descomprimiendo LDAP3
+  shell: cd /home/usuario/Plantillas/ && sudo unzip ldap3-master.zip
+
+- name: Descomprimiendo PyGithub
+  shell: cd /home/usuario/Plantillas/ && sudo unzip PyGithub-master.zip
+ 
+- name: Instalación de PyGithub
+  shell: cd /home/usuario/Plantillas/ldap3-master && sudo python setup.py install
+  shell: cd /home/usuario/Plantillas/PyGithub-master && sudo python setup.py install
+
+- copy:
+    src: aplicacion
+    dest: /home/usuario/
+    directory_mode: yes
+
+- name: Cambiando permisos
+  shell: sudo chown -R usuario:usuario /home/usuario/aplicacion
+  shell: sudo chmod -R 755 /home/usuario/aplicacion
+
+- name: Ejecutando hosting
+  shell: cd /home/usuario/aplicacion && python aplicacion.py &

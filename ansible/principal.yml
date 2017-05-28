@@ -4,8 +4,8 @@
   sudo: True
   roles:
     - actualizaciones
-    - dns
-    - serweb
-    - bd
-    - phpmyadmin
-    - { role: ldap }
+#    - dns
+#    - serweb
+#    - bd
+#    - phpmyadmin
+#    - { role: ldap }
