@@ -1,5 +1,5 @@
 - name: instalación de apache
-  shell: sudo apt install apache2 php5 php5-curl -y
+  shell: sudo apt-get install apache2 php5 php5-curl -y
 
 - copy:
     src: spotype.conf

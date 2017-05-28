@@ -32,5 +32,5 @@
   shell: sudo chown -R usuario:usuario /home/usuario/aplicacion
   shell: sudo chmod -R 755 /home/usuario/aplicacion
 
-- name: Ejecutando hosting
-  shell: cd /home/usuario/aplicacion && python aplicacion.py &
+#- name: Ejecutando hosting
+#  shell: cd /home/usuario/aplicacion && python aplicacion.py &
