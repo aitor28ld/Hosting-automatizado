@@ -1,6 +1,6 @@
 - name: Asegurarse de que phpmyadmin está instalado
   apt: name=phpmyadmin state=installed
-  notify: restart apache
+  notify: reinicio del servicio de Apache
 
 - name: Asegurarse de la configuración de phpmyadmin en apache2
   lineinfile:

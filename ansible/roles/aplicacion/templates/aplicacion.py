@@ -21,7 +21,7 @@ usuario = "cn=admin,dc=spotype,dc=com"
 # Cambiar contraseña para no tener que ponerla transparente
 password = 'root'
 
-server = Server("192.168.1.110", get_info=ALL)
+server = Server("{{ ansible_eth0.ipv4.address }}", get_info=ALL)
 conn = Connection(server, usuario, password, auto_bind=True)
 
 # Inicio de la aplicación
@@ -346,4 +346,4 @@ def delaccount():
 def server_static(filepath):
     return static_file(filepath, root='static')
 
-run(app=app,host='192.168.1.110', port=8080)
+run(app=app,host="{{ ansible_eth0.ipv4.address }}", port=8080)

@@ -2,22 +2,26 @@
 - name: instalación del servicio de DNS
   shell: sudo apt install bind9 -y
 
-# Copiamos los ficheros principales de configuración ubicados en ../files/
+# Copiamos los ficheros principales de configuración ubicados en ../templates/
 # para tener configurado Bind9
 
-- copy: 
+- name: Copiando configuración local
+  template: > 
     src=named.conf.local 
     dest=/etc/bind/named.conf.local
 
-- copy:
+- name: Copiando resolución directa
+  template: >
     src=db.spotype 
     dest=/var/cache/bind/db.spotype
 
-- copy: 
+- name: Copiando resolución inversa
+  template: >
     src=db.192.168.1 
     dest=/var/cache/bind/db.192.168.1
 
-- copy: 
+- name: Copiando resolv.conf
+  template: > 
     src=resolv.conf
     dest=/etc/resolv.conf
 

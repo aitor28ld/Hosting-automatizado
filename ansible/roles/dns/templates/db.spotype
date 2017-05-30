@@ -1,0 +1,16 @@
+$TTL    86400
+@       IN      SOA     {{ ansible_hostname }}.spotype.com. mail.spotype.com. (
+                              1         ; Serial
+                         604800         ; Refresh
+                          86400         ; Retry
+                        2419200         ; Expire
+                          86400 )       ; Negative Cache TTL
+
+spotype.com.      IN      NS      {{ ansible_hostname }}.spotype.com.
+spotype.com.      IN      MX      10 correo.spotype.com.
+
+$ORIGIN spotype.com.
+{{ ansible_hostname }}		IN      A       {{ ansible_eth0.ipv4.address }}
+www            	IN      CNAME   {{ ansible_hostname }}
+ldap		IN	CNAME	{{ ansible_hostname }}
+phpmyadmin	IN	CNAME	{{ ansible_hostname }}

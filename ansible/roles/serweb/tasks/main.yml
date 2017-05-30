@@ -15,8 +15,13 @@
     group: root
     mode: 644
 
-- name: Habilitando el sitio de Spotype.com y phpmyadmin
+- name: Deshabilitando el sitio por defecto
+  shell: sudo a2dissite 000-default.conf
+
+- name: Habilitando el sitio de Spotype.com
   shell: sudo a2ensite spotype.conf
+
+- name: Habilitando el sitio de phpmyadmin
   shell: sudo a2ensite phpmyadmin.conf
 
 - name: Haibilitando modulos de apache2
