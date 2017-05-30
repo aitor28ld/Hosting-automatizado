@@ -213,8 +213,10 @@ def git():
 	DNS = commands.getoutput('cat /var/cache/bind/db.spotype | grep '+s["sesion"][1])
 	if DNS == "":
 		commands.getoutput('sudo echo "'+s["sesion"][1]+' IN    CNAME   {{ ansible_hostname }}" >> /var/cache/bind/db.spotype')
+		commands.getoutput('sudo rndc flush && sudo /etc/init.d/bind9 restart')
 		return template('git.tpl', repo = s["github"][2], usuario = s["github"][0])
 	else:
+		commands.getoutput('sudo rndc flush && sudo /etc/init.d/bind9 restart')
 		return template('git.tpl', repo = s["github"][2], usuario = s["github"][0])
 
 # Actualizar repositorios e ir directamente a la web del usuario

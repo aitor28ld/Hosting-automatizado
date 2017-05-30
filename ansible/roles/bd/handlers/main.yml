@@ -1,2 +1,2 @@
 - name: reinicio de MySQL
-  shell: /etc/init.d/mysql restart
+  shell: sudo /etc/init.d/mysql restart
