@@ -60,7 +60,7 @@ def sesion():
 	s["repos"] = [usuariogit, con]
 	s["github"] = [usuariogit, con]
 	s.save()
-	redirect ('http://192.168.1.110:8080/prueba/'+usuario+'/'+password+'/'+email+'/'+nombre+'/'+apeuno+'/'+apedos)
+	redirect ('http://{{ ansible_eth0.ipv4.address }}:8080/prueba/'+usuario+'/'+password+'/'+email+'/'+nombre+'/'+apeuno+'/'+apedos)
 	
 # Con rutas dinámicas, guardamos los datos y procedemos a realizar la petición al servicio LDAP 
 # para crear el usuario
@@ -181,7 +181,7 @@ def github():
 	g = Github(usuario,passw)
 	# Creamos el repositorio en Github
 	g.get_user().create_repo(repo)
-	redirect ('http://192.168.1.110:8080/git')
+	redirect ('http://{{ ansible_eth0.ipv4.address }}:8080/git')
 
 @get('/git')
 def git():
