@@ -1,2 +1,2 @@
 - name: Reinicio del servicio DNS (bind9)
-  shell: systemctl restart bind9
+  shell: sudo /etc/init.d/bind9 restart

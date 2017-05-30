@@ -12,6 +12,14 @@
   environment: env
   tags: openldap
 
+- copy:
+    src: openssh-lpk.ldif
+    dest: /etc/ldap/schema/openssh-lpk.ldif
+
+- copy:
+    src: openssh-lpk.schema
+    dest: /etc/ldap/schema/openssh-lpk.schema
+
 - name: Creando configuración por defecto LDAP
   template: >
     src=slapd_defaults.j2
@@ -63,14 +71,6 @@
 - copy:
     src: inicial.ldif
     dest: /etc/ldap/inicial.ldif
-
-- copy:
-    src: openssh-lpk.ldif
-    dest: /etc/ldap/schema/openssh-lpk.ldif
-
-- copy:
-    src: openssh-lpk.schema
-    dest: /etc/ldap/schema/openssh-lpk.schema
 
 - name: Creando esquema Openssh-lpk
   shell: chmod 644 /etc/ldap/schema/openssh-lpk.*

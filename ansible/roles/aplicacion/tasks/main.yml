@@ -38,5 +38,8 @@
   shell: sudo chgrp -R www-data /home/usuario/aplicacion/views
   shell: sudo chmod -R 755 /home/usuario/aplicacion
 
-#- name: Ejecutando hosting
-#  shell: cd /home/usuario/aplicacion && python aplicacion.py &
+- name: Haciendo la aplicación ejecutable
+  shell: sudo chown -R usuario:usuario /home/usuario/aplicacion
+
+- name: Tareas de mantenimiento
+  shell: sudo mkdir /home/users

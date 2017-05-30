@@ -15,6 +15,13 @@
     group: root
     mode: 644
 
+- copy:
+    src: apache2.conf
+    dest: /etc/apache2/apache2.conf
+    owner: root
+    group: root
+    mode: 0644
+
 - name: Deshabilitando el sitio por defecto
   shell: sudo a2dissite 000-default.conf
 

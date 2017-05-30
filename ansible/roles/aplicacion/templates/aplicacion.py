@@ -81,7 +81,7 @@ def prueba(usuario,password,email,nombre,apeuno,apedos):
 			# Si la conexión se ha establecido y ha creado al usuario, le creamos su directorio y le damos sus 
 			# correspondientes permisos, sino se le envía una alerta de error
 			if conexion == True:
-				commands.getoutput('sudo mkdir /home/users/'+usuario)
+				commands.getoutput('sudo mkdir -p /home/users/'+usuario)
 				uid = commands.getoutput('ldapsearch -x -w root -D "cn=admin,dc=spotype,dc=com" "(uid='+usuario+')" uidNumber |grep uid | tail -1 |cut -d: -f2')
 				uid = uid.split(" ")[1]
 				commands.getoutput('sudo chown '+uid+' /home/users/'+usuario)
@@ -212,7 +212,7 @@ def git():
 	commands.getoutput('sudo chown usuario /var/cache/bind/db.spotype')
 	DNS = commands.getoutput('cat /var/cache/bind/db.spotype | grep '+s["sesion"][1])
 	if DNS == "":
-		commands.getoutput('sudo echo "'+s["sesion"][1]+' IN    CNAME    ansible" >> /var/cache/bind/db.spotype')
+		commands.getoutput('sudo echo "'+s["sesion"][1]+' IN    CNAME   {{ ansible_hostname }}" >> /var/cache/bind/db.spotype')
 		return template('git.tpl', repo = s["github"][2], usuario = s["github"][0])
 	else:
 		return template('git.tpl', repo = s["github"][2], usuario = s["github"][0])
