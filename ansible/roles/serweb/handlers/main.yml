@@ -1,2 +1,2 @@
 - name: reinicio del servicio de Apache
-  shell: sudo apache2ctl restart
+  shell: sudo /etc/init.d/apache2 restart
