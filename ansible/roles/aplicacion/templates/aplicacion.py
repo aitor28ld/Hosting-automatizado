@@ -165,9 +165,14 @@ def github():
 	s.save()
 	# Logueo en Github
 	g = Github(s["github"][0],s["github"][1])
-	# Creamos el repositorio en Github
-	g.get_user().create_repo(s["github"][2])
-	redirect ('/git')
+	# Búsqueda de repositorio
+	for x in g.get_user().get_repos()
+	if x == s["github"][2]:
+		return template('error-git.tpl', creacion = s["github"][2])
+	else:
+		# Creamos el repositorio en Github
+		g.get_user().create_repo(s["github"][2])
+		redirect ('/git')
 
 @post('/github')
 def github():
@@ -179,9 +184,13 @@ def github():
 	s.save()
 	# Logueo en Github
 	g = Github(usuario,passw)
-	# Creamos el repositorio en Github
-	g.get_user().create_repo(repo)
-	redirect ('http://{{ ansible_eth0.ipv4.address }}:8080/git')
+	for x in g.get_user().get_repos()
+	if x == s["github"][2]:
+		return template('error-git.tpl', creacion = s["github"][2])
+	else:
+		# Creamos el repositorio en Github
+		g.get_user().create_repo(s["github"][2])
+		redirect ('http://{{ ansible_eth0.ipv4.address }}:8080/git')
 
 @get('/git')
 def git():
