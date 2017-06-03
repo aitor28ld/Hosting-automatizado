@@ -41,5 +41,5 @@
 - name: Haciendo la aplicación ejecutable por el usuario
   shell: sudo chown -R usuario:usuario /home/usuario/aplicacion
 
-- name: Tareas de mantenimiento
-  shell: sudo mkdir /home/users
+- name: Creando directorio Users
+  file: path=/home/users state=directory
