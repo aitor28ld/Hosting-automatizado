@@ -1,5 +1,9 @@
 - name: instalación de apache, php5 y curl
-  shell: sudo apt-get install apache2 php5 php5-curl -y
+  apt: name={{item}} state=installed
+  with_items:
+       - apache2
+       - php5
+       - php5-curl
 
 - copy:
     src: spotype.conf
