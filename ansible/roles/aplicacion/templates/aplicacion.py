@@ -167,6 +167,7 @@ def github():
 	g = Github(s["github"][0],s["github"][1])
 	# Búsqueda de repositorio
 	x = g.get_user().get_repos()
+	# Filtrado de repositorios existentes
 	p = [l.name for l in x if l.name == s["github"][2] ]
 	if s["github"][2] in p:
 		return template('error-git.tpl', creacion = s["github"][2])		
