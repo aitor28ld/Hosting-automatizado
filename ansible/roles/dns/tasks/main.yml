@@ -1,6 +1,8 @@
 # Instalamos Bind9
 - name: instalación del servicio de DNS
-  shell: sudo apt install bind9 -y
+  apt:
+    name: bind9
+    state: present
 
 # Copiamos los ficheros principales de configuración ubicados en ../templates/
 # para tener configurado Bind9
@@ -9,33 +11,37 @@
   template: > 
     src=named.conf.local 
     dest=/etc/bind/named.conf.local
+    owner: root
+    group: root
+    mode: 0644
 
 - name: Copiando resolución directa
   template: >
     src=db.spotype 
     dest=/var/cache/bind/db.spotype
+    owner: root
+    group: root
+    mode: 0644
 
 - name: Copiando resolución inversa
   template: >
     src=db.192.168.1 
     dest=/var/cache/bind/db.192.168.1
+    owner: root
+    group: root
+    mode: 0644
 
 - name: Copiando resolv.conf
   template: > 
-    src=resolv.conf
-    dest=/etc/resolv.conf
+    src: resolv.conf
+    dest: /etc/resolv.conf
+    owner: root
+    group: root
+    mode: 0644
 
 # Damos los correspondientes permisos a los ficheros copiados y notificamos
 # al handler el reinicio del servicio
 
-- name: Configurando permisos del servicio DNS
-  shell: sudo chown root:root /etc/bind/named.conf.local
-  shell: sudo chmod 644 /etc/bind/named.conf.local
-  shell: sudo chown root:root /var/cache/bind/db.spotype.com
-  shell: sudo chown root:root /var/cache/bind/db.192.168.1
-  shell: sudo chmod 644 /var/cache/bind/db.spotype.com
-  shell: sudo chmod 644 /var/cache/bind/db.192.168.1
-  shell: sudo chown root:root /etc/resolv.conf
-  shell: sudo chmod 644 /etc/resolv.conf
+- name: Reiniciando servicio DNS
   notify: Reinicio del servicio DNS (bind9)
   

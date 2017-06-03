@@ -1,2 +1,4 @@
 - name: reinicio del servicio de Apache
-  shell: sudo /etc/init.d/apache2 restart
+- service:
+    name: apache2
+    state: restarted

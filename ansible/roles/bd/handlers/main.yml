@@ -1,2 +1,5 @@
 - name: reinicio de MySQL
-  shell: sudo /etc/init.d/mysql restart
+- service:
+    name: mysql-server
+    state: restarted
+
