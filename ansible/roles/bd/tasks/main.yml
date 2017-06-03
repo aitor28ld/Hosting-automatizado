@@ -5,5 +5,9 @@
   debconf: name='mysql-server' question='mysql-server/root_password_again' value='{{mysql_root_password | quote}}' vtype='password'
 
 - name: Instalando MySQL Server/Client
-  shell: apt-get install mysql-server mysql-client python-mysqldb -y
+  apt: name={{item}} state=installed
+  with_items:
+       - mysql-server
+       - mysql-client
+       - python-mysqldb
   notify: reinicio de MySQL
