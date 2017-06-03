@@ -11,37 +11,38 @@
   template: > 
     src=named.conf.local 
     dest=/etc/bind/named.conf.local
-    owner: root
-    group: root
-    mode: 0644
+    owner=root
+    group=root
+    mode=0644
 
 - name: Copiando resolución directa
   template: >
     src=db.spotype 
     dest=/var/cache/bind/db.spotype
-    owner: root
-    group: root
-    mode: 0644
+    owner=root
+    group=root
+    mode=0644
 
 - name: Copiando resolución inversa
   template: >
     src=db.192.168.1 
     dest=/var/cache/bind/db.192.168.1
-    owner: root
-    group: root
-    mode: 0644
+    owner=root
+    group=root
+    mode=0644
 
 - name: Copiando resolv.conf
   template: > 
-    src: resolv.conf
-    dest: /etc/resolv.conf
-    owner: root
-    group: root
-    mode: 0644
+    src=resolv.conf
+    dest=/etc/resolv.conf
+    owner=root
+    group=root
+    mode=0644
 
 # Damos los correspondientes permisos a los ficheros copiados y notificamos
 # al handler el reinicio del servicio
 
-- name: Reiniciando servicio DNS
+- name: Reiniciando DNS con handler
+  command: /bin/true
   notify: Reinicio del servicio DNS (bind9)
   

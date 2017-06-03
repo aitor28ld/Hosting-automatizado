@@ -31,6 +31,6 @@
 - name: Habilitando el sitio de phpmyadmin
   shell: sudo a2ensite phpmyadmin.conf
 
-- name: Haibilitando modulos de apache2
+- name: Habilitando modulos de apache2
   action: command a2enmod rewrite
   notify: reinicio del servicio de Apache

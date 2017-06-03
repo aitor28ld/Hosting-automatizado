@@ -21,7 +21,7 @@ usuario = "cn=admin,dc=spotype,dc=com"
 # Cambiar contraseña para no tener que ponerla transparente
 password = 'root'
 
-server = Server("{{ ansible_eth0.ipv4.address }}", get_info=ALL)
+server = Server("{{ ansible_eth0.ipv4.address}}", get_info=ALL)
 conn = Connection(server, usuario, password, auto_bind=True)
 
 # Inicio de la aplicación
@@ -60,7 +60,7 @@ def sesion():
 	s["repos"] = [usuariogit, con]
 	s["github"] = [usuariogit, con]
 	s.save()
-	redirect ('http://{{ ansible_eth0.ipv4.address }}:8080/prueba/'+usuario+'/'+password+'/'+email+'/'+nombre+'/'+apeuno+'/'+apedos)
+	redirect ('/prueba/'+usuario+'/'+password+'/'+email+'/'+nombre+'/'+apeuno+'/'+apedos)
 	
 # Con rutas dinámicas, guardamos los datos y procedemos a realizar la petición al servicio LDAP 
 # para crear el usuario
@@ -166,13 +166,14 @@ def github():
 	# Logueo en Github
 	g = Github(s["github"][0],s["github"][1])
 	# Búsqueda de repositorio
-	for x in g.get_user().get_repos()
-	if x == s["github"][2]:
-		return template('error-git.tpl', creacion = s["github"][2])
+	x = g.get_user().get_repos()
+	p = [l.name for l in x if l.name == s["github"][2] ]
+	if s["github"][2] in p:
+		return template('error-git.tpl', creacion = s["github"][2])		
 	else:
 		# Creamos el repositorio en Github
-		g.get_user().create_repo(s["github"][2])
-		redirect ('/git')
+                g.get_user().create_repo(s["github"][2])
+                redirect ('/git')
 
 @post('/github')
 def github():
@@ -184,13 +185,14 @@ def github():
 	s.save()
 	# Logueo en Github
 	g = Github(usuario,passw)
-	for x in g.get_user().get_repos()
-	if x == s["github"][2]:
-		return template('error-git.tpl', creacion = s["github"][2])
-	else:
-		# Creamos el repositorio en Github
-		g.get_user().create_repo(s["github"][2])
-		redirect ('http://{{ ansible_eth0.ipv4.address }}:8080/git')
+	x = g.get_user().get_repos()
+	p = [l.name for l in x if l.name == s["github"][2] ]
+	if s["github"][2] in p:
+                return template('error-git.tpl', creacion = s["github"][2])
+        else:
+                # Creamos el repositorio en Github
+                g.get_user().create_repo(s["github"][2])
+                redirect ('/git')
 
 @get('/git')
 def git():
@@ -221,7 +223,7 @@ def git():
 	commands.getoutput('sudo chown usuario /var/cache/bind/db.spotype')
 	DNS = commands.getoutput('cat /var/cache/bind/db.spotype | grep '+s["sesion"][1])
 	if DNS == "":
-		commands.getoutput('sudo echo "'+s["sesion"][1]+' IN    CNAME   {{ ansible_hostname }}" >> /var/cache/bind/db.spotype')
+		commands.getoutput('sudo echo "'+s["sesion"][1]+' IN    CNAME   debian" >> /var/cache/bind/db.spotype')
 		commands.getoutput('sudo rndc flush && sudo /etc/init.d/bind9 restart')
 		return template('git.tpl', repo = s["github"][2], usuario = s["github"][0])
 	else:
