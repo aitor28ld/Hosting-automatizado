@@ -6,8 +6,9 @@
 
 *Contacto:*
 
-- Twitter: @2ait8r
+- Twitter: [@2Ait8r](http://twitter.com/2Ait8r)
 - E-mail: ldaitor28@gmail.com
+- Wordpress: [Open Binary 2.0](https://openbinary20.wordpress.com)
 ***
 # Hosting automatizado con autenticación en LDAP
 ***
