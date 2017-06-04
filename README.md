@@ -13,8 +13,8 @@
 ***
 ## Indice
 1. [Introducción](https://github.com/aitor28ld/Proyecto/blob/master/README.md#introducción)
-  1. [Descripción del proyecto](https://github.com/aitor28ld/Proyecto/blob/master/README.md#descripción-del-proyecto)
-  2. [Objetivos a alcanzar](https://github.com/aitor28ld/Proyecto/blob/master/README.md#objetivos-a-alcanzar)
+	1. [Descripción del proyecto](https://github.com/aitor28ld/Proyecto/blob/master/README.md#descripción-del-proyecto)
+	2. [Objetivos a alcanzar](https://github.com/aitor28ld/Proyecto/blob/master/README.md#objetivos-a-alcanzar)
 2. [Software a utilizar](https://github.com/aitor28ld/Proyecto/blob/master/README.md#software-a-utilizar)
 	1. [Ansible](https://github.com/aitor28ld/Proyecto/blob/master/README.md#ansible)
 		1. [¿Qué es Ansible?](https://github.com/aitor28ld/Proyecto/blob/master/README.md#qué-es-ansible)
