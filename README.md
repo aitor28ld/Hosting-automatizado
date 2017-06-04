@@ -12,46 +12,46 @@
 # Hosting automatizado con autenticación en LDAP
 ***
 ## Indice
-1. Introducción
-  1. Descripción del proyecto
-  2. Objetivos a alcanzar
-2. Software a utilizar
-	1. Ansible
-		1. ¿Qué es Ansible?
-		2. ¿Por qué utilizar Ansible?
-	2. Bottle
-		1. ¿Qué es Bottle?
-		2. ¿Por qué Bottle y no Django?
-	3. LDAP
-		1. ¿Qué es LDAP?
-3. Instalación del software necesario con Ansible y control de versiones
-	1. Instalación y configuración del DNS con Ansible
-	2. Instalación y configuración del Servidor Web con Ansible
-	3. Instalación y configuración de la base de datos con Ansible
-	4. Instalación y configuración del servicio Ldap con Ansible
-	5. Pruebas de funcionamiento
-		1. Servicio DNS (Bind9)
-		2. Servidor Web (Apache2)
-		3. Base de datos (MySQL)
-		4. Servicio Ldap
-4. Creación de la aplicación en Bottle
-	1. Instalación de los paquetes y aplicaciones necesarias
-	2. Beaker y PyGithub
-		1. ¿Qué es Beaker?
-		2. ¿Qué es PyGithub?
-	3. Creación de la aplicación de Bottle paso a paso
-		1. Creación de usuarios en LDAP y verificación de dichos usuarios
-		2. Inicio de sesión de usuarios ya registrados
-		3.  Perfiles de usuarios
-		4.  Creación de repositorios con subida de ficheros iniciales
-		5.  Actualización de repositorios o directos a la web del usuario
-		6.  Creación de bases de datos en mysql
-		7.  Administración por phpmyadmin de las bases de datos
-		8.  Eliminación de repositorios creados
-		9.  Eliminación de base de datos
-		10.  Eliminación de usuarios
-5. Despliegue de la aplicación de Bottle con Ansible
-6. Referencias
+1. [Introducción](https://github.com/aitor28ld/Proyecto/blob/master/README.md#introducción)
+  1. [Descripción del proyecto](https://github.com/aitor28ld/Proyecto/blob/master/README.md#descripción-del-proyecto)
+  2. [Objetivos a alcanzar](https://github.com/aitor28ld/Proyecto/blob/master/README.md#objetivos-a-alcanzar)
+2. [Software a utilizar](https://github.com/aitor28ld/Proyecto/blob/master/README.md#software-a-utilizar)
+	1. [Ansible](https://github.com/aitor28ld/Proyecto/blob/master/README.md#ansible)
+		1. [¿Qué es Ansible?](https://github.com/aitor28ld/Proyecto/blob/master/README.md#qué-es-ansible)
+		2. [¿Por qué utilizar Ansible?](https://github.com/aitor28ld/Proyecto/blob/master/README.md#por-qué-utilizar-ansible)
+	2. [Bottle](https://github.com/aitor28ld/Proyecto/blob/master/README.md#bottle)
+		1. [¿Qué es Bottle?](https://github.com/aitor28ld/Proyecto/blob/master/README.md#qué-es-bottle)
+		2. [¿Por qué Bottle y no Django?](https://github.com/aitor28ld/Proyecto/blob/master/README.md#por-qué-bottle-y-no-django)
+	3. [LDAP](https://github.com/aitor28ld/Proyecto/blob/master/README.md#ldap)
+		1. [¿Qué es LDAP?](https://github.com/aitor28ld/Proyecto/blob/master/README.md#qué-es-ldap)
+3. [Instalación del software necesario con Ansible y control de versiones](https://github.com/aitor28ld/Proyecto/blob/master/README.md#instalación-del-software-necesario-con-ansible-y-control-de-versiones)
+	1. [Instalación y configuración del DNS con Ansible](https://github.com/aitor28ld/Proyecto/blob/master/README.md#instalación-y-configuración-del-dns-con-ansible)
+	2. [Instalación y configuración del Servidor Web con Ansible](https://github.com/aitor28ld/Proyecto/blob/master/README.md#instalación-y-configuración-del-servidor-web-con-ansible)
+	3. [Instalación y configuración de la base de datos con Ansible](https://github.com/aitor28ld/Proyecto/blob/master/README.md#instalación-y-configuración-de-la-base-de-datos-con-ansible)
+	4. [Instalación y configuración del servicio Ldap con Ansible](https://github.com/aitor28ld/Proyecto/blob/master/README.md#instalación-y-configuración-del-servicio-ldap-con-ansible)
+	5. [Pruebas de funcionamiento](https://github.com/aitor28ld/Proyecto/blob/master/README.md#pruebas-de-funcionamiento)
+		1. [Servicio DNS (Bind9)](https://github.com/aitor28ld/Proyecto/blob/master/README.md#servicio-dns-bind9)
+		2. [Servidor Web (Apache2)](https://github.com/aitor28ld/Proyecto/blob/master/README.md#servidor-web-apache2)
+		3. [Base de datos (MySQL)](https://github.com/aitor28ld/Proyecto/blob/master/README.md#base-de-datos-mysql)
+		4. [Servicio Ldap](https://github.com/aitor28ld/Proyecto/blob/master/README.md#servicio-ldap)
+4. [Creación de la aplicación en Bottle](https://github.com/aitor28ld/Proyecto/blob/master/README.md#creación-de-la-aplicación-en-bottle)
+	1. [Instalación de los paquetes y aplicaciones necesarias](https://github.com/aitor28ld/Proyecto/blob/master/README.md#instalación-de-los-paquetes-y-aplicaciones-necesarias)
+	2. [Beaker y PyGithub](https://github.com/aitor28ld/Proyecto/blob/master/README.md#beaker-y-pygithub)
+		1. [¿Qué es Beaker?](https://github.com/aitor28ld/Proyecto/blob/master/README.md#qué-es-beaker)
+		2. [¿Qué es PyGithub?](https://github.com/aitor28ld/Proyecto/blob/master/README.md#qué-es-pygithub)
+	3. [Creación de la aplicación de Bottle paso a paso](https://github.com/aitor28ld/Proyecto/blob/master/README.md#creación-de-la-aplicación-de-bottle-paso-a-paso)
+		1. [Creación de usuarios en LDAP y verificación de dichos usuarios](https://github.com/aitor28ld/Proyecto/blob/master/README.md#creación-de-usuarios-en-ldap-y-verificación-de-dichos-usuarios)
+		2. [Inicio de sesión de usuarios ya registrados](https://github.com/aitor28ld/Proyecto/blob/master/README.md#inicio-de-sesión-de-usuarios-ya-registrados)
+		3.  [Perfiles de usuarios](https://github.com/aitor28ld/Proyecto/blob/master/README.md#perfiles-de-usuarios)
+		4.  [Creación de repositorios con subida de ficheros iniciales](https://github.com/aitor28ld/Proyecto/blob/master/README.md#creación-de-repositorios-con-subida-de-ficheros-iniciales)
+		5.  [Actualización de repositorios o directos a la web del usuario](https://github.com/aitor28ld/Proyecto/blob/master/README.md#actualización-de-repositorios-o-directos-a-la-web-del-usuario)
+		6.  [Creación de bases de datos en mysql](https://github.com/aitor28ld/Proyecto/blob/master/README.md#creación-de-bases-de-datos-en-mysql)
+		7.  [Administración por phpmyadmin de las bases de datos](https://github.com/aitor28ld/Proyecto/blob/master/README.md#administración-por-phpmyadmin-de-las-bases-de-datos)
+		8.  [Eliminación de repositorios creados](https://github.com/aitor28ld/Proyecto/blob/master/README.md#eliminación-de-repositorios-creados)
+		9.  [Eliminación de base de datos](https://github.com/aitor28ld/Proyecto/blob/master/README.md#eliminación-de-base-de-datos)
+		10.  [Eliminación de usuarios](https://github.com/aitor28ld/Proyecto/blob/master/README.md#eliminación-de-usuarios)
+5. [Despliegue de la aplicación de Bottle con Ansible](https://github.com/aitor28ld/Proyecto/blob/master/README.md#despliegue-de-la-aplicación-de-bottle-con-ansible)
+6. [Referencias](https://github.com/aitor28ld/Proyecto/blob/master/README.md#referencias)
 
 ***
 # Introducción
@@ -85,7 +85,7 @@ Si se dispone de tiempo, se puede realizar una ampliación añadiendo Balanceado
 
 Ansible es una herramienta de configuración informática que puede configurar sistemas, desplegar software y orquestar más tareas avanzadas así cómo despliegue continuo o actualizaciones sucesivas.
 
-###¿Por qué utilizar Ansible?
+### ¿Por qué utilizar Ansible?
 Diseñado para despliegue a diferentes niveles desde el principio, Ansible modela tu infraestructura informática describiendo como interactúan todos tus sistemas, en lugar de sólo administrar un sistema a la vez.
 
 Algunos motivos por lo que vamos a utilizar Ansible:
@@ -1073,7 +1073,7 @@ Ahora procedemos a verificar las instalaciones y configuraciones realizadas.
     modifiersName: cn=admin,dc=spotype,dc=com
     modifyTimestamp: 20170501110236Z
 
-#Creación de la aplicación en Bottle
+# Creación de la aplicación en Bottle
 
 ## Instalación de los paquetes y aplicaciones necesarias
 
