@@ -8,5 +8,5 @@
     - aplicacion
     - bd
     - phpmyadmin
-    - { role: ldap }
+    - ldap
     - dns

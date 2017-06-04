@@ -15,10 +15,17 @@
 - copy:
     src: openssh-lpk.ldif
     dest: /etc/ldap/schema/openssh-lpk.ldif
+    owner: root
+    group: root
+    mode: 0644
 
 - copy:
     src: openssh-lpk.schema
     dest: /etc/ldap/schema/openssh-lpk.schema
+    owner: root
+    group: root
+    mode: 0644
+
 
 - name: Creando configuración por defecto LDAP
   template: >
@@ -71,13 +78,13 @@
 - copy:
     src: inicial.ldif
     dest: /etc/ldap/inicial.ldif
+    owner: root
+    group: root
+    mode: 0644
 
 - name: Creando esquema Openssh-lpk
-  shell: chmod 644 /etc/ldap/schema/openssh-lpk.*
-  shell: chown root:root /etc/ldap/schema/openssh-lpk.*
+  command: /bin/true
   notify: reiniciando LDAP
 
 - name: Creando una base para Openldap
-  shell: chmod 644 /etc/ldap/inicial.ldif
-  shell: chown root:root /etc/ldap/inicial.ldif
   shell: ldapadd -x -D 'cn=admin,dc=spotype,dc=com' -w root -f /etc/ldap/inicial.ldif
