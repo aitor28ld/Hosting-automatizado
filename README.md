@@ -1023,7 +1023,7 @@ Ahora procedemos a verificar las instalaciones y configuraciones realizadas.
 
 ### Servidor Web (Apache2)
 
-![Servidor Web](http://imgur.com/aBsXvcS "Funcionamiento")
+![Servidor Web](http://i.imgur.com/aBsXvcS.jpg)
 
 ### Base de datos (MySQL)
 
