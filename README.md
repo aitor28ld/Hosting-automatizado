@@ -8,13 +8,10 @@
 
 - Twitter: @2ait8r
 - E-mail: ldaitor28@gmail.com
-
-[enlace al indice](##Indice)
-
 ***
-#Hosting automatizado con autenticación en LDAP
+# Hosting automatizado con autenticación en LDAP
 ***
-##Indice
+## Indice
 1. Introducción
   1. Descripción del proyecto
   2. Objetivos a alcanzar
@@ -57,11 +54,11 @@
 6. Referencias
 
 ***
-#Introducción
+# Introducción
 
 Para la realización de este proyecto utilizaremos, en mayor medida, Ansible y Bottle. A continuación realizaremos unas pequeñas introducciones para Ansible y Bottle.
 
-##Descripción del proyecto
+## Descripción del proyecto
 La descripción del proyecto es ofrecer servicios de Hosting a clientes, los cuales podrán crearse una cuenta a través de la interfaz que se ubicarán en usuarios del servicio LDAP. 
 
 Una vez iniciada sesión, el usuario podrá realizar acciones cómo:
@@ -73,18 +70,18 @@ Una vez iniciada sesión, el usuario podrá realizar acciones cómo:
 
 Las acciones que podrá realizar serán lanzadas por Playbooks de Ansible.
 
-##Objetivos a alcanzar
+## Objetivos a alcanzar
 
 El objetivo del proyecto consiste en, a través de la interfaz web con una aplicación en Bottle o Django, lanzamos las instrucciones disponibles en la interfaz mediante Playbooks de Ansible.
 El usuario, el cual estará creado en nuestro servicio LDAP y autenticado con la librería de Python, podrá subir sus ficheros a través de una cuenta Github clonada a su directorio Home especificada en su cuenta de LDAP.
 
 Si se dispone de tiempo, se puede realizar una ampliación añadiendo Balanceadores de carga a los servidores para ofrecer una buena disponibilidad de los servicios ofrecidos a los usuarios.
 
-#Software a utilizar
+# Software a utilizar
 
-##Ansible
+## Ansible
 
-###¿Qué es Ansible?
+### ¿Qué es Ansible?
 
 Ansible es una herramienta de configuración informática que puede configurar sistemas, desplegar software y orquestar más tareas avanzadas así cómo despliegue continuo o actualizaciones sucesivas.
 
