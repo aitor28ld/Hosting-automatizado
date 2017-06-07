@@ -1667,3 +1667,5 @@ El hosting **no** dispone de redirección de puertos.
 [Tutorial de Beaker](http://beaker.readthedocs.io/en/latest/configuration.html)
 
 [Tutorial de PyGithub](http://pygithub.github.io/PyGithub/v2/user_guide.html)
+
+[Tutorial sobre documentación con Markdown](http://joedicastro.com/pages/markdown.html)
